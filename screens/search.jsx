@@ -5,7 +5,7 @@ import { SpeechSearchView } from "./search/speech-search";
 import { TextSearchView } from "./search/text-search";
 
 export function SearchView({ route }) {
-    const { type } = route.params;
+    const { type } = route?.params ?? {};
 
     return (
         <View

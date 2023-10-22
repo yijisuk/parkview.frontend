@@ -1,7 +1,9 @@
+import "react-native-url-polyfill/auto";
 import { createClient } from "@supabase/supabase-js";
+import { PARKVIEW_SUPABASE_URL, PARKVIEW_ANNON_KEY } from "@env";
 
-const supabaseUrl = process.env.PARKVIEW_SUPABASE_URL;
-const supabaseKey = process.env.PARKVIEW_ANNON_KEY;
+const supabaseUrl = PARKVIEW_SUPABASE_URL;
+const supabaseKey = PARKVIEW_ANNON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
