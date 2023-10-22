@@ -7,13 +7,16 @@ import {
     StyleSheet,
 } from "react-native";
 import { Audio } from "expo-av";
+import supabase from "../../config/supabase.js";
 
 
 export function SpeechSearchView() {
+
     const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
     const [soundUri, setSoundUri] = useState(null);
     const recordingInstance = useRef(null);
+
 
     async function startRecording() {
 
@@ -36,6 +39,7 @@ export function SpeechSearchView() {
         }
     }
 
+
     async function stopRecording() {
 
         setTranscript("Stopping recording..");
@@ -48,8 +52,27 @@ export function SpeechSearchView() {
         const uri = recordingInstance.current.getURI();
         console.log("Recording stopped and stored at", uri);
 
+        await uploadAudioToSupabase(uri);
+
         setTranscript("");
         setSoundUri(uri);
+    }
+    
+
+    async function uploadAudioToSupabase(uri) {
+
+        const file = await fetch(uri);
+        const blob = await file.blob();
+
+        const { data, error } = await supabase.storage
+            .from("audiofiles")
+            .upload("demo-audio.wav", blob);
+
+        if (error) {
+            console.error("Error uploading audio: ", error);
+        } else {
+            console.log("Successfully uploaded audio: ", data);
+        }
     }
 
 
