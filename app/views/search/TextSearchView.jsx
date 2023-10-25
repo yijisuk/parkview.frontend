@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 
-export function TextSearchView() {
+export default function TextSearchView() {
     const data = [
         {
             id: "1",

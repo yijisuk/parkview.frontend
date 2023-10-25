@@ -10,27 +10,23 @@ import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
 
-import supabase from "../../config/supabase.js";
+import supabase from "../../../config/supabase.js";
 import { PARKVIEW_STORAGE_BUCKET } from "@env";
 
-
-export function SpeechSearchView() {
-
+export default function SpeechSearchView() {
     const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
     const [soundUri, setSoundUri] = useState(null);
     const recordingInstance = useRef(null);
 
-
     async function startRecording() {
-
         try {
             await Audio.requestPermissionsAsync();
             await Audio.setAudioModeAsync({
                 allowsRecordingIOS: true,
                 playsInSilentModeIOS: true,
             });
-            
+
             const { recording } = await Audio.Recording.createAsync(
                 Audio.RecordingOptionsPresets.HIGH_QUALITY
             );
@@ -43,9 +39,7 @@ export function SpeechSearchView() {
         }
     }
 
-
     async function stopRecording() {
-
         setTranscript("Stopping recording..");
 
         setRecording(undefined);
@@ -61,7 +55,6 @@ export function SpeechSearchView() {
         setTranscript("");
         setSoundUri(uri);
     }
-    
 
     async function uploadAudio(uri, contentType = "audio/m4a") {
         try {
@@ -93,7 +86,6 @@ export function SpeechSearchView() {
         }
     }
 
-
     async function readAudioFileAsBase64(uri) {
         try {
             const base64String = await FileSystem.readAsStringAsync(uri, {
@@ -105,7 +97,6 @@ export function SpeechSearchView() {
             return null;
         }
     }
-
 
     return (
         <View style={styles.container}>

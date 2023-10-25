@@ -1,11 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { HomeView } from "./screens/home";
-import { SearchView } from "./screens/search";
-import { FavoritesView } from "./screens/favorites";
-import { SettingsView } from "./screens/settings";
+import HomeView from "../views/HomeView";
+import SearchView from "../views/SearchView";
+import FavoritesView from "../views/FavoritesView";
+import SettingsView from "../views/SettingsView";
+import DummyView from "../views/DummyView";
 
 
 const Tab = createBottomTabNavigator();
@@ -21,9 +22,9 @@ function NavigationBar() {
     );
 }
 
-export default function App() {
+export default function MainApp() {
     return (
-        <NavigationContainer>
+        <NavigationContainer independent={true}>
             <NavigationBar />
         </NavigationContainer>
     );
