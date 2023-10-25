@@ -10,7 +10,7 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
 
-export function HomeView({ navigation }) {
+export default function HomeView({ navigation }) {
     const [userLocation, setUserLocation] = useState(null);
 
     useEffect(() => {

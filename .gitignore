@@ -2,3 +2,4 @@
 assets/
 .env
 node_modules/
+.expo
