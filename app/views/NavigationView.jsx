@@ -5,33 +5,76 @@ import {
     StyleSheet,
     TouchableOpacity,
     PermissionsAndroid,
+    ActivityIndicator,
     Linking,
 } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
-import { Button, FAB, Card } from "react-native-elements";
+import { Button, Icon } from "react-native-elements";
 import { BACKEND_ADDRESS } from "@env";
 import axios from "axios";
 
 
-export default function NavigationView() {
+export default function NavigationView({ route }) {
+
+    const destinationAddress = route?.params?.destinationAddress || null;
+    console.log(destinationAddress);
 
     const [userLocationCoords, setUserLocationCoords] = useState(null);
     const [destinationCoords, setDestinationCoords] = useState(null);
     const [routeCoords, setRouteCoords] = useState(null);
     const [estTime, setEstTime] = useState("");
     const [estDist, setEstDist] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const mapRef = useRef(null);
 
-    const carparkName = "National University of Singapore";
-
     useEffect(() => {
-        getNavigation(carparkName);
-    }, []);
+        setUserLocationCoords(null);
+        setDestinationCoords(null);
+        setRouteCoords(null);
+        setIsLoading(true);
 
+        const recenterMap = async () => {
+            let currentLocation = await Location.getCurrentPositionAsync();
+            const originLat = currentLocation.coords.latitude;
+            const originLon = currentLocation.coords.longitude;
 
-    async function getNavigation(destinationAddress) {
-        
+            const newRegion = {
+                latitude: originLat,
+                longitude: originLon,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            };
+
+            setUserLocationCoords(newRegion);
+
+            if (mapRef.current) {
+                mapRef.current.animateToRegion(newRegion, 500);
+            }
+        };
+
+        recenterMap();
+
+        if (destinationAddress) {
+            getDirections(destinationAddress).then(() => {
+                setIsLoading(false);
+                if (routeCoords && mapRef.current) {
+                    mapRef.current.fitToCoordinates(routeCoords, {
+                        edgePadding: {
+                            top: 50,
+                            right: 50,
+                            bottom: 50,
+                            left: 50,
+                        },
+                        animated: true,
+                    });
+                }
+            });
+        }
+    }, [destinationAddress]);
+
+    async function getDirections(destinationAddress) {
+
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
             alert("Permission to access location was denied");
@@ -58,8 +101,8 @@ export default function NavigationView() {
             const destinationResponse = await axios.get(destinationUrl);
             const destinationData = destinationResponse.data;
 
-            if (destinationData) { 
-                setDestinationCoords(destinationData); 
+            if (destinationData) {
+                setDestinationCoords(destinationData);
             }
 
             // Note: Ideally, you should make sure destinationData actually contains latitude and longitude
@@ -76,7 +119,6 @@ export default function NavigationView() {
                 setEstDist(routesData.estDist);
                 setEstTime(routesData.estTime);
             }
-
         } catch (error) {
             console.error(`Error getting navigation details: ${error.message}`);
         }
@@ -90,8 +132,7 @@ export default function NavigationView() {
     }
 
     // Redirects the user to the external navigation app
-    function outNavigation() {
-        
+    function redirectToNavigation() {
         const scheme = Platform.select({
             ios: "maps:0,0//?",
             android: "google.navigation:q=",
@@ -119,36 +160,50 @@ export default function NavigationView() {
                 followUserLocation={true}
                 onLayout={() => fitScreen()}
             >
-                <Polyline
-                    coordinates={routeCoords == null ? [] : routeCoords}
-                    strokeWidth={5}
-                    strokeColor="#007AFF"
-                />
-                <Marker coordinate={destinationCoords} title={carparkName} />
+                {destinationAddress && routeCoords && (
+                    <>
+                        <Polyline
+                            coordinates={routeCoords}
+                            strokeWidth={5}
+                            strokeColor="#007AFF"
+                        />
+                        <Marker
+                            coordinate={destinationCoords}
+                            title={destinationAddress}
+                        />
+                    </>
+                )}
             </MapView>
-            <FAB
-                icon={{ name: "place" }}
-                color="red"
-                style={styles.fitScreenStyle}
-                onPress={() => fitScreen()}
-            />
-            <View style={styles.inner} title={carparkName}>
-                <Text>{carparkName}</Text>
-                <Text>Estimated Time: {estTime}</Text>
-                <Text>Estimated Distance: {estDist}</Text>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        style={styles.button}
-                        title="Cancel"
-                        onPress={() => {}}
-                    />
-                    <Button
-                        style={styles.button}
-                        title="Navigate"
-                        onPress={() => outNavigation()}
-                    />
+            {destinationAddress && (
+                <View style={styles.inner} title={destinationAddress}>
+                    {isLoading ? (
+                        <ActivityIndicator size="large" color="#007AFF" />
+                    ) : (
+                        <>
+                            <Text>{destinationAddress}</Text>
+                            <Text>Estimated Time: {estTime}</Text>
+                            <Text>Estimated Distance: {estDist}</Text>
+                            <View style={styles.buttonContainer}>
+                                <Button
+                                    style={styles.button}
+                                    title="Navigate"
+                                    onPress={() => redirectToNavigation()}
+                                />
+                                <Button
+                                    style={styles.button}
+                                    icon={
+                                        <Icon
+                                            name="star"
+                                            color="white"
+                                        />
+                                    }
+                                    onPress={() => {}}
+                                />
+                            </View>
+                        </>
+                    )}
                 </View>
-            </View>
+            )}
         </View>
     );
 }
@@ -163,16 +218,19 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: "row",
+        justifyContent: "center",
     },
     inner: {
         flex: 1,
-        height: "20%",
-        width: "100%",
-        backgroundColor: "#f0f8ff",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    button: {
+        margin: 5,
     },
     fitScreenStyle: {
         position: "absolute",
-        left: "80%",
-        bottom: "28%",
+        right: 20,
+        bottom: 20,
     },
 });
