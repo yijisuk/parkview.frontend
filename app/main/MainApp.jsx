@@ -6,7 +6,8 @@ import HomeView from "../views/HomeView";
 import SearchView from "../views/SearchView";
 import FavoritesView from "../views/FavoritesView";
 import SettingsView from "../views/SettingsView";
-import DummyView from "../views/DummyView";
+// import DummyView from "../views/DummyView";
+import NavigationView from "../views/NavigationView";
 
 
 const Tab = createBottomTabNavigator();
@@ -16,6 +17,12 @@ function NavigationBar() {
         <Tab.Navigator>
             <Tab.Screen name="Home" component={HomeView} />
             <Tab.Screen name="Search" component={SearchView} />
+            <Tab.Screen
+                name="Navigation"
+                component={NavigationView}
+                initialParams={{ destinationAddress: null }}
+                options={{ headerShown: false }}
+            />
             <Tab.Screen name="Favorites" component={FavoritesView} />
             <Tab.Screen name="Settings" component={SettingsView} />
         </Tab.Navigator>
