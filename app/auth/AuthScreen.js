@@ -22,11 +22,14 @@ export default function AuthScreen() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const testEmail = "test@user.com";
+    const testPassword = "password";
+
     async function signInWithEmail() {
         setLoading(true);
         const { error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
+            email: testEmail,
+            password: testPassword,
         });
 
         if (error) Alert.alert("Sign In Error", error.message);

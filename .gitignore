@@ -2,4 +2,5 @@
 assets/
 .env
 node_modules/
-.expo
+.expo/
+package-lock.json
