@@ -1,19 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     View,
     TextInput,
     FlatList,
     Text,
-    Button,
-    StyleSheet,
+    TouchableOpacity,
     Dimensions,
+    StyleSheet,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { GOOGLE_API_KEY } from "@env";
 
 
 export default function TextSearchView() {
-
+    
     const data = [
         // {
         //     id: "1",
@@ -40,12 +42,11 @@ export default function TextSearchView() {
         //     distance: "~1.1km",
         // },
     ];
-    
+
     const navigation = useNavigation();
     const [searchAddress, setSearchAddress] = useState("");
 
     const handleSearch = () => {
-        // Navigate to another view and pass the searchText
         navigation.navigate("Navigation", {
             destinationAddress: searchAddress,
         });
@@ -53,26 +54,26 @@ export default function TextSearchView() {
 
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.searchInput}
-                placeholder="Search Location"
-                value={searchAddress}
-                onChangeText={(text) => setSearchAddress(text)}
-            />
-            <Button title="Search" onPress={handleSearch} />
-            {/* <FlatList
-                data={data}
-                renderItem={({ item }) => (
-                    <View style={styles.itemContainer}>
-                        <Text style={styles.locationText}>{item.location}</Text>
-                        <Text style={styles.availableText}>
-                            Available: {item.available}
-                        </Text>
-                        <Text style={styles.distanceText}>{item.distance}</Text>
-                    </View>
-                )}
-                keyExtractor={(item) => item.id}
-            /> */}
+            <View style={styles.searchContainer}>
+                <GooglePlacesAutocomplete
+                    placeholder="Search Location"
+                    onPress={(data, details = null) => {
+                        setSearchAddress(data.description);
+                    }}
+                    query={{
+                        key: GOOGLE_API_KEY,
+                        language: "en",
+                        components: "country:sg",
+                    }}
+                    enablePoweredByContainer={false}
+                />
+                <TouchableOpacity
+                    style={styles.iconContainer}
+                    onPress={handleSearch}
+                >
+                    <MaterialIcons name="search" size={24} color="black" />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -83,31 +84,14 @@ const styles = StyleSheet.create({
         width: Dimensions.get("window").width,
         paddingHorizontal: 10,
     },
-    searchInput: {
-        borderWidth: 1,
+    searchContainer: {
+        flexDirection: "row",
+        alignItems: "center",
         borderColor: "#ddd",
         borderRadius: 4,
         padding: 10,
-        marginVertical: 10,
-        width: "100%",
     },
-    itemContainer: {
-        borderBottomWidth: 1,
-        borderBottomColor: "#ddd",
-        paddingVertical: 10,
-        flexDirection: "column",
-    },
-    locationText: {
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    availableText: {
-        marginTop: 5,
-        fontSize: 14,
-    },
-    distanceText: {
-        marginTop: 5,
-        fontSize: 14,
-        color: "gray",
+    iconContainer: {
+        padding: 10,
     },
 });
