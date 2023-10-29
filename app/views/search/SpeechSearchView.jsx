@@ -77,12 +77,12 @@ export default function SpeechSearchView() {
                 });
 
             if (error) {
-                console.error("Error uploading audio:", error);
+                console.error("Error uploading audio:", error.message);
             } else {
                 console.log("Successfully uploaded audio:", data);
             }
         } catch (error) {
-            console.error("An error occurred:", error);
+            console.error("An error occurred:", error.message);
         }
     }
 
