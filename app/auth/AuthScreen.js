@@ -17,7 +17,7 @@ import { ASSETS_TEMP_LOGO_URI } from "@env";
 
 
 export default function AuthScreen() {
-
+    
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
