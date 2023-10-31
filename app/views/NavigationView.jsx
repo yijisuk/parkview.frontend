@@ -7,18 +7,19 @@ import {
     PermissionsAndroid,
     ActivityIndicator,
     Linking,
+    Alert
 } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import { Button, Icon } from "react-native-elements";
 import { BACKEND_ADDRESS } from "@env";
+import supabase from "../../config/supabase";
 import axios from "axios";
 
 
 export default function NavigationView({ route }) {
 
     const destinationAddress = route?.params?.destinationAddress || null;
-    console.log(destinationAddress);
 
     const [userLocationCoords, setUserLocationCoords] = useState(null);
     const [destinationCoords, setDestinationCoords] = useState(null);
@@ -26,13 +27,27 @@ export default function NavigationView({ route }) {
     const [estTime, setEstTime] = useState("");
     const [estDist, setEstDist] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [user, setUser] = useState(null);
     const mapRef = useRef(null);
+
+    //Initial load for user information 
+    useEffect(() => {
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user) {
+                setUser(user);
+            } else {
+                Alert.alert("Error Accessing User Data");
+            }
+        });
+    }, []);
 
     useEffect(() => {
         setUserLocationCoords(null);
         setDestinationCoords(null);
         setRouteCoords(null);
         setIsLoading(true);
+
+
 
         const recenterMap = async () => {
             let currentLocation = await Location.getCurrentPositionAsync();
@@ -124,6 +139,19 @@ export default function NavigationView({ route }) {
         }
     }
 
+    //API call to POST /favouriteLocation (to change console log to alert user using notification bar or other methods)
+    function addFavourites(){
+        axios.post(`${BACKEND_ADDRESS}/favouriteLocation?id=${user.identities[0].id}&location=${route.params.destinationAddress}`)
+        .then((res) => {
+            if (res.data.data){
+                Alert.alert("Favourite Location Existed")
+            } else {
+                Alert.alert("Favourite Location Added");
+            }
+        }).catch((error) => {console.log(error)});
+    }
+
+
     // Zoom to fit the route on screen
     function fitScreen() {
         if (routeCoords) {
@@ -197,7 +225,7 @@ export default function NavigationView({ route }) {
                                             color="white"
                                         />
                                     }
-                                    onPress={() => {}}
+                                    onPress={() => addFavourites()}
                                 />
                             </View>
                         </>
