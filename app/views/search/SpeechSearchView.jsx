@@ -85,8 +85,8 @@ export default function SpeechSearchView() {
             const uid = user.identities[0].id;
             const id = Math.random().toString(36).substring(2);
 
-            const filePath = `${uid}/audio-${id}.m4a`;
-            const audioFileName = `audio-${id}.m4a`;
+            const filePath = `${uid}/rec-${id}.m4a`;
+            const audioFileName = `rec-${id}.m4a`;
 
             const { data, error } = await supabase.storage
                 .from(PARKVIEW_STORAGE_BUCKET)
@@ -104,7 +104,7 @@ export default function SpeechSearchView() {
             // send process Audio request to backend
             axios
                 .get(
-                    `${BACKEND_ADDRESS}/processVoiceQuery?audioFileName=${audioFileName}`
+                    `${BACKEND_ADDRESS}/processVoiceQuery?uid=${uid}?audioFileName=${audioFileName}`
                 )
                 .then((res) => {
                     console.log("Response from backend: ", res.data.data);
