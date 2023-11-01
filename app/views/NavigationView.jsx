@@ -30,7 +30,7 @@ export default function NavigationView({ route }) {
     const [isFavourite, setIsFavourite] = useState(false);
     const mapRef = useRef(null);
 
-    //Initial load for user information
+    // Initial load for user information
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
             if (user) {
@@ -117,8 +117,8 @@ export default function NavigationView({ route }) {
                 longitudeDelta: 0.0421,
             });
 
-            // Fetch destination coordinates
-            const destinationUrl = `${BACKEND_ADDRESS}/getCoordinates?address=${encodeURIComponent(
+            // Fetch parking lot coordinate nearby destination
+            const destinationUrl = `${BACKEND_ADDRESS}/getParkingCoordinates?destinationAddress=${encodeURIComponent(
                 destinationAddress
             )}`;
             const destinationResponse = await axios.get(destinationUrl);
