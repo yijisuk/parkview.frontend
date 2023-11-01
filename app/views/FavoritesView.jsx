@@ -22,6 +22,7 @@ import axios from "axios";
 
 
 export default function FavoritesView() {
+
     const [user, setUser] = useState(null);
     const [refreshing, setRefreshing] = React.useState(false);
     const [favLocations, setFavLocations] = useState([]);
@@ -50,18 +51,33 @@ export default function FavoritesView() {
     //API call to GET /favouriteLocation
     async function getFavLocation(){
         setRefreshing(true);
-        axios.get(`${BACKEND_ADDRESS}/favouriteLocation?id=${user.identities[0].id}`).then((res) => {
-            setFavLocations(res.data.data);
-            setRefreshing(false)
-        }).catch((error) => {console.log(error)});
+        axios
+            .get(
+                `${BACKEND_ADDRESS}/getFavouriteLocation?id=${user.identities[0].id}`
+            )
+            .then((res) => {
+                setFavLocations(res.data.data);
+                setRefreshing(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     //API call to DELETE /favouriteLocation
     async function deleteFavLocation(location){
-        axios.delete(`${BACKEND_ADDRESS}/favouriteLocation?id=${user.identities[0].id}&location=${location}`)
-        .then((res) => {
-            getFavLocation().catch((error) => {console.log(error)});
-        }).catch((error) => {console.log(error)});
+        axios
+            .delete(
+                `${BACKEND_ADDRESS}/deleteFavouriteLocation?id=${user.identities[0].id}&location=${location}`
+            )
+            .then((res) => {
+                getFavLocation().catch((error) => {
+                    console.log(error);
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     
@@ -75,44 +91,56 @@ export default function FavoritesView() {
 
     return (
         <SafeAreaView style={styles.container}>
-        <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={getFavLocation} />
-        }>
-        { favLocations.length == 0 ? (
-        <Text> Placeholder: You have no favorite location </Text>
-        ) : (favLocations.map((location, i) => 
-            <LocationList location={location} handleSearch={() => handleSearch(location)} deleteFavLocation={() => deleteFavLocation(location)} key={i} /> 
-            ))} 
-        </ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={getFavLocation}
+                    />
+                }
+            >
+                {favLocations.length == 0 ? (
+                    <Text> Placeholder: You have no favorite location </Text>
+                ) : (
+                    favLocations.map((location, i) => (
+                        <LocationList
+                            location={location}
+                            handleSearch={() => handleSearch(location)}
+                            deleteFavLocation={() =>
+                                deleteFavLocation(location)
+                            }
+                            key={i}
+                        />
+                    ))
+                )}
+            </ScrollView>
         </SafeAreaView>
-        );
+    );
 }
 
 
-const LocationList = ({location, handleSearch, deleteFavLocation}) => {
-
+const LocationList = ({ location, handleSearch, deleteFavLocation }) => {
     return (
-        <ListItem.Swipeable 
-        onPress={handleSearch}
-        leftContent={
-            <Button
-            onPress={deleteFavLocation}
-            icon={{ name: 'delete', color: 'white' }}
-            buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }}
-            />
-        }
-        minSlideWidth={"10%"}
-        onSwipeEnd={() => console.log("swipe")}
+        <ListItem.Swipeable
+            onPress={handleSearch}
+            leftContent={
+                <Button
+                    onPress={deleteFavLocation}
+                    icon={{ name: "delete", color: "white" }}
+                    buttonStyle={{ minHeight: "100%", backgroundColor: "red" }}
+                />
+            }
+            minSlideWidth={"10%"}
+            onSwipeEnd={() => console.log("swipe")}
         >
-        <Icon name="star" color={styles.favIcon.color} />
-        <ListItem.Content>
-        <ListItem.Title>{location}</ListItem.Title>
-        </ListItem.Content>
-        <ListItem.Chevron />
+            <Icon name="star" color={styles.favIcon.color} />
+            <ListItem.Content>
+                <ListItem.Title>{location}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
         </ListItem.Swipeable>
-        );
-}
+    );
+};
 
 
 //** To do stylesheet for FavouritePage 

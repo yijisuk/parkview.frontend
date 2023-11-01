@@ -18,7 +18,6 @@ import axios from "axios";
 
 
 export default function NavigationView({ route }) {
-
     const destinationAddress = route?.params?.destinationAddress || null;
 
     const [userLocationCoords, setUserLocationCoords] = useState(null);
@@ -28,13 +27,25 @@ export default function NavigationView({ route }) {
     const [estDist, setEstDist] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState(null);
+    const [isFavourite, setIsFavourite] = useState(false);
     const mapRef = useRef(null);
 
-    //Initial load for user information 
+    //Initial load for user information
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
             if (user) {
                 setUser(user);
+
+                axios
+                    .get(
+                        `${BACKEND_ADDRESS}/checkFavouriteLocation?id=${user.identities[0].id}&location=${route.params.destinationAddress}`
+                    )
+                    .then((res) => {
+                        setIsFavourite(res.data.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             } else {
                 Alert.alert("Error Accessing User Data");
             }
@@ -46,8 +57,6 @@ export default function NavigationView({ route }) {
         setDestinationCoords(null);
         setRouteCoords(null);
         setIsLoading(true);
-
-
 
         const recenterMap = async () => {
             let currentLocation = await Location.getCurrentPositionAsync();
@@ -89,7 +98,6 @@ export default function NavigationView({ route }) {
     }, [destinationAddress]);
 
     async function getDirections(destinationAddress) {
-
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
             alert("Permission to access location was denied");
@@ -139,18 +147,44 @@ export default function NavigationView({ route }) {
         }
     }
 
-    //API call to POST /favouriteLocation (to change console log to alert user using notification bar or other methods)
-    function addFavourites(){
-        axios.post(`${BACKEND_ADDRESS}/favouriteLocation?id=${user.identities[0].id}&location=${route.params.destinationAddress}`)
-        .then((res) => {
-            if (res.data.data){
-                Alert.alert("Favourite Location Existed")
-            } else {
-                Alert.alert("Favourite Location Added");
-            }
-        }).catch((error) => {console.log(error)});
+    // API call to POST /addFavouriteLocation
+    // (to change console log to alert user using notification bar or other methods)
+    function addFavourites() {
+        axios
+            .post(
+                `${BACKEND_ADDRESS}/addFavouriteLocation?id=${user.identities[0].id}&location=${destinationAddress}`
+            )
+            .then((res) => {
+                if (res.data.data) {
+                    setIsFavourite(true);
+                } else {
+                    setIsFavourite(false);
+                }
+            })
+            .catch((error) => {
+                console.log("Error in adding favourite location");
+                console.log(error);
+            });
     }
 
+    // API call to DELETE /deleteFavouriteLocation
+    function deleteFromFavourites() {
+        axios
+            .delete(
+                `${BACKEND_ADDRESS}/deleteFavouriteLocation?id=${user.identities[0].id}&location=${destinationAddress}`
+            )
+            .then((res) => {
+                if (res.data.data) {
+                    setIsFavourite(false);
+                } else {
+                    // Handle error case here if needed
+                }
+            })
+            .catch((error) => {
+                console.log("Error in deleting favourite location");
+                console.log(error);
+            });
+    }
 
     // Zoom to fit the route on screen
     function fitScreen() {
@@ -221,11 +255,19 @@ export default function NavigationView({ route }) {
                                     style={styles.button}
                                     icon={
                                         <Icon
-                                            name="star"
+                                            name={
+                                                isFavourite
+                                                    ? "star"
+                                                    : "star-border"
+                                            }
                                             color="white"
                                         />
                                     }
-                                    onPress={() => addFavourites()}
+                                    onPress={() =>
+                                        isFavourite
+                                            ? deleteFromFavourites()
+                                            : addFavourites()
+                                    }
                                 />
                             </View>
                         </>
