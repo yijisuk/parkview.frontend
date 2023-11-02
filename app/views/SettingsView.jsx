@@ -7,6 +7,7 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
+    Alert
 } from "react-native";
 import supabase from "../../config/supabase";
 

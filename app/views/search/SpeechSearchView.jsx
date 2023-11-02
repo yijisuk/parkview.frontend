@@ -1,23 +1,78 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     View,
     Text,
     TextInput,
     TouchableOpacity,
     StyleSheet,
+    Alert
 } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
+import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../../config/supabase.js";
-import { PARKVIEW_STORAGE_BUCKET } from "@env";
+import { PARKVIEW_STORAGE_BUCKET, BACKEND_ADDRESS } from "@env";
+
 
 export default function SpeechSearchView() {
+
+    const navigation = useNavigation();
+
     const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
-    const [soundUri, setSoundUri] = useState(null);
+    const [user, setUser] = useState(null);
+    const [destinationAddress, setDestinationAddress] = useState(null);
     const recordingInstance = useRef(null);
+
+    // Initial load for user information
+    useEffect(() => {
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user) {
+                setUser(user);
+            } else {
+                // Alert.alert("Error Accessing User Data");
+            }
+        }).catch((error) => console.log(error));
+    });
+
+    useEffect(() => {
+        if (
+            destinationAddress !== null &&
+            typeof destinationAddress !== "undefined"
+        ) {
+            // Show alert to the user
+            Alert.alert(
+                "Proceed to Navigation",
+                `${destinationAddress}`,
+                [
+                    {
+                        text: "No",
+                        onPress: () => {
+                            console.log("User cancelled navigation");
+                            setDestinationAddress(null);
+                        },
+                        style: "cancel",
+                    },
+                    {
+                        text: "Yes",
+                        onPress: () => {
+                            navigation.navigate("Navigation", {
+                                destinationAddress: destinationAddress,
+                            });
+                            setDestinationAddress(null);
+                        },
+                    },
+                ],
+                { cancelable: false }
+            );
+        }
+    }, [destinationAddress, navigation]);
+
+
+
 
     async function startRecording() {
         try {
@@ -39,7 +94,7 @@ export default function SpeechSearchView() {
         }
     }
 
-    async function stopRecording() {
+    async function handleRecordedFile() {
         setTranscript("Stopping recording..");
 
         setRecording(undefined);
@@ -49,15 +104,14 @@ export default function SpeechSearchView() {
         });
         const uri = recordingInstance.current.getURI();
         console.log("Recording stopped and stored at", uri);
-
-        await uploadAudio(uri);
-
         setTranscript("");
-        setSoundUri(uri);
+
+        await processAudioToDestination(uri);
     }
 
-    async function uploadAudio(uri, contentType = "audio/m4a") {
+    async function processAudioToDestination(uri, contentType = "audio/m4a") {
         try {
+            // upload Audio to Supabase
             const base64FileData = await readAudioFileAsBase64(uri);
             if (!base64FileData) {
                 console.error("Could not read base64 data from file");
@@ -66,8 +120,11 @@ export default function SpeechSearchView() {
 
             const buffer = Buffer.from(base64FileData, "base64");
 
+            const uid = user.identities[0].id;
             const id = Math.random().toString(36).substring(2);
-            const filePath = `temp/demo-audio-${id}.m4a`;
+
+            const filePath = `${uid}/rec-${id}.m4a`;
+            const audioFileName = `rec-${id}.m4a`;
 
             const { data, error } = await supabase.storage
                 .from(PARKVIEW_STORAGE_BUCKET)
@@ -77,10 +134,26 @@ export default function SpeechSearchView() {
                 });
 
             if (error) {
-                console.error("Error uploading audio:", error.message);
+                console.error("Error uploading audio: ", error.message);
             } else {
-                console.log("Successfully uploaded audio:", data);
+                console.log("Successfully uploaded audio: ", data);
             }
+
+            // send process Audio request to backend
+            axios
+                .get(
+                    `${BACKEND_ADDRESS}/processVoiceQuery?uid=${uid}&audioFileName=${audioFileName}`
+                )
+                .then((res) => {
+                    setDestinationAddress(res.data.destination);
+                })
+                .catch((error) => {
+                    console.log(
+                        "Error processing audio on backend: ",
+                        error.message
+                    );
+                });
+
         } catch (error) {
             console.error("An error occurred:", error.message);
         }
@@ -98,6 +171,7 @@ export default function SpeechSearchView() {
         }
     }
 
+
     return (
         <View style={styles.container}>
             <TextInput
@@ -108,7 +182,7 @@ export default function SpeechSearchView() {
             />
             <TouchableOpacity
                 style={styles.button}
-                onPress={recording ? stopRecording : startRecording}
+                onPress={recording ? handleRecordedFile : startRecording}
             >
                 <Text style={styles.buttonText}>
                     {recording ? "Stop Recording" : "Start Recording"}
