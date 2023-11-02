@@ -5,6 +5,7 @@ import {
     TextInput,
     TouchableOpacity,
     StyleSheet,
+    Alert
 } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
@@ -32,10 +33,46 @@ export default function SpeechSearchView() {
             if (user) {
                 setUser(user);
             } else {
-                Alert.alert("Error Accessing User Data");
+                // Alert.alert("Error Accessing User Data");
             }
         }).catch((error) => console.log(error));
     });
+
+    useEffect(() => {
+        if (
+            destinationAddress !== null &&
+            typeof destinationAddress !== "undefined"
+        ) {
+            // Show alert to the user
+            Alert.alert(
+                "Proceed to Navigation",
+                `${destinationAddress}`,
+                [
+                    {
+                        text: "No",
+                        onPress: () => {
+                            console.log("User cancelled navigation");
+                            setDestinationAddress(null);
+                        },
+                        style: "cancel",
+                    },
+                    {
+                        text: "Yes",
+                        onPress: () => {
+                            navigation.navigate("Navigation", {
+                                destinationAddress: destinationAddress,
+                            });
+                            setDestinationAddress(null);
+                        },
+                    },
+                ],
+                { cancelable: false }
+            );
+        }
+    }, [destinationAddress, navigation]);
+
+
+
 
     async function startRecording() {
         try {
@@ -67,6 +104,7 @@ export default function SpeechSearchView() {
         });
         const uri = recordingInstance.current.getURI();
         console.log("Recording stopped and stored at", uri);
+        setTranscript("");
 
         await processAudioToDestination(uri);
     }
@@ -104,11 +142,10 @@ export default function SpeechSearchView() {
             // send process Audio request to backend
             axios
                 .get(
-                    `${BACKEND_ADDRESS}/processVoiceQuery?uid=${uid}?audioFileName=${audioFileName}`
+                    `${BACKEND_ADDRESS}/processVoiceQuery?uid=${uid}&audioFileName=${audioFileName}`
                 )
                 .then((res) => {
-                    console.log("Response from backend: ", res.data.data);
-                    setDestinationAddress(res.data.data);
+                    setDestinationAddress(res.data.destination);
                 })
                 .catch((error) => {
                     console.log(
@@ -134,23 +171,6 @@ export default function SpeechSearchView() {
         }
     }
 
-    async function handlePostProcessing() {
-        try {
-            await handleRecordedFile();
-            await processAudioToDestination();
-
-            if (typeof destinationAddress !== "undefined") {
-                navigation.navigate("Navigation", {
-                    destinationAddress: destinationAddress,
-                });
-            } else {
-                console.error("destinationAddress is undefined");
-            }
-        } catch (error) {
-            console.error("Error in handlePostProcessing:", error);
-        }
-    }
-
 
     return (
         <View style={styles.container}>
@@ -162,7 +182,7 @@ export default function SpeechSearchView() {
             />
             <TouchableOpacity
                 style={styles.button}
-                onPress={recording ? handlePostProcessing : startRecording}
+                onPress={recording ? handleRecordedFile : startRecording}
             >
                 <Text style={styles.buttonText}>
                     {recording ? "Stop Recording" : "Start Recording"}

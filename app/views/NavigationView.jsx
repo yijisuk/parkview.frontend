@@ -22,6 +22,7 @@ export default function NavigationView({ route }) {
 
     const [userLocationCoords, setUserLocationCoords] = useState(null);
     const [destinationCoords, setDestinationCoords] = useState(null);
+    const [parkingLotAddress, setParkingLotAddress] = useState(null);
     const [routeCoords, setRouteCoords] = useState(null);
     const [estTime, setEstTime] = useState("");
     const [estDist, setEstDist] = useState("");
@@ -98,42 +99,67 @@ export default function NavigationView({ route }) {
     }, [destinationAddress]);
 
     async function getDirections(destinationAddress) {
+        
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
             alert("Permission to access location was denied");
             return;
         }
 
+        let currentLocation;
         try {
-            let currentLocation = await Location.getCurrentPositionAsync();
+            currentLocation = await Location.getCurrentPositionAsync();
+        } catch (error) {
+            console.error(`Error getting current location: ${error.message}`);
+            return;
+        }
 
-            const originLat = currentLocation.coords.latitude;
-            const originLon = currentLocation.coords.longitude;
+        if (!currentLocation || !currentLocation.coords) {
+            console.error("Invalid current location data.");
+            return;
+        }
 
-            setUserLocationCoords({
-                latitude: originLat,
-                longitude: originLon,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            });
+        const originLat = currentLocation.coords.latitude;
+        const originLon = currentLocation.coords.longitude;
 
-            // Fetch parking lot coordinate nearby destination
+        setUserLocationCoords({
+            latitude: originLat,
+            longitude: originLon,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+        });
+
+        let destinationData;
+        try {
             const destinationUrl = `${BACKEND_ADDRESS}/getParkingCoordinates?destinationAddress=${encodeURIComponent(
                 destinationAddress
             )}`;
             const destinationResponse = await axios.get(destinationUrl);
-            const destinationData = destinationResponse.data;
+            destinationData = destinationResponse.data;
+        } catch (error) {
+            console.error(
+                `Error fetching parking coordinates: ${error.message}`
+            );
+            return;
+        }
 
-            if (destinationData) {
-                setDestinationCoords(destinationData);
-            }
+        if (
+            !destinationData ||
+            !destinationData["firstSlot"] ||
+            !destinationData["firstSlot"]["Location"]
+        ) {
+            console.error("Invalid destination data.");
+            return;
+        }
 
-            // Note: Ideally, you should make sure destinationData actually contains latitude and longitude
-            const destinationLat = destinationData.latitude;
-            const destinationLon = destinationData.longitude;
+        const [latitude, longitude] = destinationData["firstSlot"]["Location"]
+            .split(" ")
+            .map(Number);
+        setParkingLotAddress(destinationData["firstSlot"]["Development"]);
+        setDestinationCoords({ latitude, longitude });
 
-            // Fetch routes
-            const routesUrl = `${BACKEND_ADDRESS}/getRoutes?originLat=${originLat}&originLon=${originLon}&destinationLat=${destinationLat}&destinationLon=${destinationLon}`;
+        try {
+            const routesUrl = `${BACKEND_ADDRESS}/getRoutes?originLat=${originLat}&originLon=${originLon}&destinationLat=${latitude}&destinationLon=${longitude}`;
             const routesResponse = await axios.get(routesUrl);
             const routesData = routesResponse.data;
 
@@ -143,9 +169,10 @@ export default function NavigationView({ route }) {
                 setEstTime(routesData.estTime);
             }
         } catch (error) {
-            console.error(`Error getting navigation details: ${error.message}`);
+            console.error(`Error fetching routes: ${error.message}`);
         }
     }
+
 
     // API call to POST /addFavouriteLocation
     // (to change console log to alert user using notification bar or other methods)
@@ -243,6 +270,7 @@ export default function NavigationView({ route }) {
                     ) : (
                         <>
                             <Text>{destinationAddress}</Text>
+                            <Text>{parkingLotAddress}</Text>
                             <Text>Estimated Time: {estTime}</Text>
                             <Text>Estimated Distance: {estDist}</Text>
                             <View style={styles.buttonContainer}>

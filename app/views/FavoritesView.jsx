@@ -7,7 +7,8 @@ import {
     ActivityIndicator,
     RefreshControl,
     SafeAreaView,
-    TouchableHighlight
+    TouchableHighlight,
+    Alert
 } from "react-native";
 import {
     Text,
