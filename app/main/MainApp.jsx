@@ -8,6 +8,7 @@ import FavoritesView from "../views/FavoritesView";
 import SettingsView from "../views/SettingsView";
 // import DummyView from "../views/DummyView";
 import NavigationView from "../views/NavigationView";
+import PreferenceSetupView from "../views/PreferencesSetupView";
 
 
 const Tab = createBottomTabNavigator();
@@ -25,6 +26,7 @@ function NavigationBar() {
             />
             <Tab.Screen name="Favorites" component={FavoritesView} />
             <Tab.Screen name="Settings" component={SettingsView} />
+            <Tab.Screen name="Preference" component={PreferenceSetupView} />
         </Tab.Navigator>
     );
 }
