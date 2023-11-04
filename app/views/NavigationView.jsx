@@ -29,6 +29,7 @@ export default function NavigationView({ route }) {
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState(null);
     const [isFavourite, setIsFavourite] = useState(false);
+    const [errorExists, setErrorExists] = useState(false);
     const mapRef = useRef(null);
 
     // Initial load for user information
@@ -80,7 +81,7 @@ export default function NavigationView({ route }) {
 
         recenterMap();
 
-        if (destinationAddress) {
+        if (user && destinationAddress) {
             getDirections(destinationAddress).then(() => {
                 setIsLoading(false);
                 if (routeCoords && mapRef.current) {
@@ -96,7 +97,7 @@ export default function NavigationView({ route }) {
                 }
             });
         }
-    }, [destinationAddress]);
+    }, [user, destinationAddress]);
 
     async function getDirections(destinationAddress) {
         
@@ -110,11 +111,13 @@ export default function NavigationView({ route }) {
         try {
             currentLocation = await Location.getCurrentPositionAsync();
         } catch (error) {
+            setErrorExists(true);
             console.error(`Error getting current location: ${error.message}`);
             return;
         }
 
         if (!currentLocation || !currentLocation.coords) {
+            setErrorExists(true);
             console.error("Invalid current location data.");
             return;
         }
@@ -130,37 +133,50 @@ export default function NavigationView({ route }) {
         });
 
         let destinationData;
-        try {
-            const destinationUrl = `${BACKEND_ADDRESS}/getParkingCoordinates?destinationAddress=${encodeURIComponent(
-                destinationAddress
-            )}`;
-            const destinationResponse = await axios.get(destinationUrl);
-            destinationData = destinationResponse.data;
-        } catch (error) {
-            console.error(
-                `Error fetching parking coordinates: ${error.message}`
-            );
-            return;
-        }
 
-        if (
-            !destinationData ||
-            !destinationData["firstSlot"] ||
-            !destinationData["firstSlot"]["Location"]
-        ) {
+        axios
+            .get(`${BACKEND_ADDRESS}/getParkingCoordinates`, {
+                params: {
+                    userId: user.id,
+                    originLat: originLat,
+                    originLon: originLon,
+                    destinationAddress: destinationAddress,
+                },
+            })
+            .then((destinationResponse) => {
+                destinationData = destinationResponse.data;
+            })
+            .catch((error) => {
+                setErrorExists(true);
+                console.error(
+                    `Error fetching parking coordinates: ${error.message}`
+                );
+            });
+
+        if (!destinationData || !destinationData.slot) {
+            setErrorExists(true);
             console.error("Invalid destination data.");
             return;
         }
 
-        const [latitude, longitude] = destinationData["firstSlot"]["Location"]
-            .split(" ")
-            .map(Number);
-        setParkingLotAddress(destinationData["firstSlot"]["Development"]);
+        const latitude = destinationData.slot.latitude.map(Number);
+        const longitude = destinationData.slot.longitude.map(Number);
+
+        setParkingLotAddress(destinationData.slot.development);
         setDestinationCoords({ latitude, longitude });
 
         try {
-            const routesUrl = `${BACKEND_ADDRESS}/getRoutes?originLat=${originLat}&originLon=${originLon}&destinationLat=${latitude}&destinationLon=${longitude}`;
-            const routesResponse = await axios.get(routesUrl);
+            const routesResponse = await axios.get(
+                `${BACKEND_ADDRESS}/getRoutes`,
+                {
+                    params: {
+                        originLat: originLat,
+                        originLon: originLon,
+                        destinationLat: latitude,
+                        destinationLon: longitude,
+                    },
+                }
+            );
             const routesData = routesResponse.data;
 
             if (routesData) {
@@ -169,6 +185,7 @@ export default function NavigationView({ route }) {
                 setEstTime(routesData.estTime);
             }
         } catch (error) {
+            setErrorExists(true);
             console.error(`Error fetching routes: ${error.message}`);
         }
     }
@@ -270,34 +287,42 @@ export default function NavigationView({ route }) {
                     ) : (
                         <>
                             <Text>{destinationAddress}</Text>
-                            <Text>{parkingLotAddress}</Text>
-                            <Text>Estimated Time: {estTime}</Text>
-                            <Text>Estimated Distance: {estDist}</Text>
-                            <View style={styles.buttonContainer}>
-                                <Button
-                                    style={styles.button}
-                                    title="Navigate"
-                                    onPress={() => redirectToNavigation()}
-                                />
-                                <Button
-                                    style={styles.button}
-                                    icon={
-                                        <Icon
-                                            name={
-                                                isFavourite
-                                                    ? "star"
-                                                    : "star-border"
+                            {errorExists ? (
+                                <Text>An error has occurred.</Text>
+                            ) : (
+                                <>
+                                    <Text>{parkingLotAddress}</Text>
+                                    <Text>Estimated Time: {estTime}</Text>
+                                    <Text>Estimated Distance: {estDist}</Text>
+                                    <View style={styles.buttonContainer}>
+                                        <Button
+                                            style={styles.button}
+                                            title="Navigate"
+                                            onPress={() =>
+                                                redirectToNavigation()
                                             }
-                                            color="white"
                                         />
-                                    }
-                                    onPress={() =>
-                                        isFavourite
-                                            ? deleteFromFavourites()
-                                            : addFavourites()
-                                    }
-                                />
-                            </View>
+                                        <Button
+                                            style={styles.button}
+                                            icon={
+                                                <Icon
+                                                    name={
+                                                        isFavourite
+                                                            ? "star"
+                                                            : "star-border"
+                                                    }
+                                                    color="white"
+                                                />
+                                            }
+                                            onPress={() =>
+                                                isFavourite
+                                                    ? deleteFromFavourites()
+                                                    : addToFavourites()
+                                            }
+                                        />
+                                    </View>
+                                </>
+                            )}
                         </>
                     )}
                 </View>
