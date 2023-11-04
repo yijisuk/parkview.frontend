@@ -132,37 +132,41 @@ export default function NavigationView({ route }) {
             longitudeDelta: 0.0421,
         });
 
-        let destinationData;
+        let destinationData = null;
 
-        axios
-            .get(`${BACKEND_ADDRESS}/getParkingCoordinates`, {
-                params: {
-                    userId: user.id,
-                    originLat: originLat,
-                    originLon: originLon,
-                    destinationAddress: destinationAddress,
-                },
-            })
-            .then((destinationResponse) => {
-                destinationData = destinationResponse.data;
-            })
-            .catch((error) => {
+        try {
+            const destinationResponse = await axios.get(
+                `${BACKEND_ADDRESS}/getParkingCoordinates`,
+                {
+                    params: {
+                        userId: user.id,
+                        originLat: originLat,
+                        originLon: originLon,
+                        destinationAddress: destinationAddress,
+                    },
+                }
+            );
+
+            destinationData = destinationResponse.data;
+
+            // Your logic depending on destinationData goes here
+            if (!destinationData) {
                 setErrorExists(true);
-                console.error(
-                    `Error fetching parking coordinates: ${error.message}`
-                );
-            });
+                console.error("Invalid destination data.");
+                return;
+            }
 
-        if (!destinationData || !destinationData.slot) {
+        } catch (error) {
             setErrorExists(true);
-            console.error("Invalid destination data.");
-            return;
+            console.error(
+                `Error fetching parking coordinates: ${error.message}`
+            );
         }
 
-        const latitude = destinationData.slot.latitude.map(Number);
-        const longitude = destinationData.slot.longitude.map(Number);
+        const latitude = destinationData.latitude;
+        const longitude = destinationData.longitude;
 
-        setParkingLotAddress(destinationData.slot.development);
+        setParkingLotAddress(destinationData.development);
         setDestinationCoords({ latitude, longitude });
 
         try {
