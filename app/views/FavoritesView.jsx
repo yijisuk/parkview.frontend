@@ -84,6 +84,7 @@ export default function FavoritesView() {
     
     //**To change to point to API for recommendation -> then navigation
     const navigation = useNavigation();
+    
     function handleSearch (location) {
         navigation.navigate("Navigation", {
             destinationAddress: location,
@@ -101,7 +102,7 @@ export default function FavoritesView() {
                 }
             >
                 {favLocations.length == 0 ? (
-                    <Text> Placeholder: You have no favorite location </Text>
+                    <Text>Placeholder: You have no favorite location</Text>
                 ) : (
                     favLocations.map((location, i) => (
                         <LocationList

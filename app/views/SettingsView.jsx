@@ -7,19 +7,23 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    Alert
+    Alert,
 } from "react-native";
+import Modal from "react-native-modal";
+import PreferencesSetupView from "./settings/PreferencesSetupView";
 import supabase from "../../config/supabase";
 
 
 export default function SettingsView() {
-
     const [user, setUser] = useState(null);
+    const [email, setEmail] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
             if (user) {
                 setUser(user);
+                setEmail(user.email);
             } else {
                 Alert.alert("Error Accessing User Data");
             }
@@ -32,53 +36,96 @@ export default function SettingsView() {
         if (error) {
             Alert.alert("Error Signing Out User", error.message);
         }
-    }
+    };
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <Stack.Screen options={{ headerShown: true, title: "Settings" }} />
             <ScrollView>
                 <View style={styles.container}>
-                    <Text>{JSON.stringify(user, null, 2)}</Text>
+                    <Text style={styles.emailText}>Hi {email}</Text>
                     <TouchableOpacity
-                        onPress={doLogOut}
-                        style={styles.button}
+                        onPress={() => setModalVisible(true)}
+                        style={styles.menuItem}
                     >
+                        <Text style={styles.menuItemText}>Preferences</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={doLogOut} style={styles.button}>
                         <Text style={styles.buttonText}>Logout</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            <Modal
+                isVisible={modalVisible}
+                onBackdropPress={() => setModalVisible(false)} // Close the modal when the backdrop is pressed
+                onSwipeComplete={() => setModalVisible(false)} // Optional: close the modal by swiping
+                swipeDirection="left" // Optional: set the swipe direction
+                style={styles.modal} // Custom styles for the modal
+                animationIn="slideInRight" // Change the animation
+                animationOut="slideOutRight" // Change the animation
+            >
+                <PreferencesSetupView />
+                <TouchableOpacity
+                    onPress={() => setModalVisible(!modalVisible)}
+                    style={styles.closeModalButton}
+                >
+                    <Text style={styles.closeModalButtonText}>Close</Text>
+                </TouchableOpacity>
+            </Modal>
         </SafeAreaView>
     );
 }
 
-
 const styles = StyleSheet.create({
     container: {
-        marginTop: 40,
-        padding: 12,
+        // styles for the container
+        padding: 20,
     },
-    verticallySpaced: {
-        paddingTop: 4,
-        paddingBottom: 4,
-        alignSelf: "stretch",
+    emailText: {
+        // styles for the email text
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 15,
     },
-    mt20: {
-        marginTop: 20,
+    menuItem: {
+        // styles for menu item
+        backgroundColor: "#DDD",
+        padding: 15,
+        borderRadius: 5,
     },
-    input: {
-        borderWidth: 1,
-        borderColor: "lightgray",
-        borderRadius: 4,
-        padding: 8,
+    menuItemText: {
+        // styles for menu item text
+        fontSize: 18,
+        textAlign: "center",
     },
     button: {
+        // styles for logout button
         backgroundColor: "black",
-        padding: 12,
-        borderRadius: 4,
-        alignItems: "center",
+        padding: 15,
+        borderRadius: 5,
+        marginTop: 15,
     },
     buttonText: {
+        // styles for button text
+        fontSize: 18,
         color: "white",
+        textAlign: "center",
+    },
+    closeModalButton: {
+        // styles for close modal button
+        marginTop: 15,
+        backgroundColor: "black",
+        padding: 30,
+        borderRadius: 5,
+    },
+    closeModalButtonText: {
+        // styles for close modal button text
+        fontSize: 18,
+        color: "white",
+        textAlign: "center",
+    },
+    modal: {
+        // custom styles for modal
+        margin: 0, // This is important to ensure the modal shows up from the side
+        justifyContent: "flex-end", // Align to the bottom of the screen
     },
 });
