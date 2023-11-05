@@ -102,7 +102,7 @@ export default function FavoritesView() {
                 }
             >
                 {favLocations.length == 0 ? (
-                    <Text>Placeholder: You have no favorite location</Text>
+                    <Text style={styles.placeholderText}>You have no favourite location saved</Text>
                 ) : (
                     favLocations.map((location, i) => (
                         <LocationList
@@ -151,7 +151,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         flex: 1,
     },
-    favIcon : {
+    favIcon: {
         color: "blue",
-    }
+    },
+    placeholderText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        padding: 20
+    },
 });

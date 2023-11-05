@@ -21,14 +21,15 @@ const childrenWidth = width - 20;
 const childrenHeight = 48;
 
 export default function PreferencesSetupView() {
+
     const [displayData, setDisplayData] = useState([
-        { key: "weather", text: "Fits the weather" },
         { key: "availability", text: "More available slots" },
         { key: "hourlyRate", text: "Lower hourly rates" },
+        { key: "weather", text: "Fits the weather" },
     ]);
     const [preferenceData, setPreferenceData] = useState({
-        weather: 1,
-        availability: 2,
+        weather: 2,
+        availability: 1,
         hourlyRate: 3,
     });
     const [user, setUser] = useState(null);
@@ -57,8 +58,9 @@ export default function PreferencesSetupView() {
                         response.data &&
                         Object.keys(response.data).length > 0
                     ) {
-                        // console.log("Retrieved user preference", response.data)
+                        console.log("Retrieved user preference", response.data)
                         setPreferenceData(response.data);
+                        sortDisplayData(response.data);
                     }
                 })
                 .catch((error) => {
@@ -123,7 +125,39 @@ export default function PreferencesSetupView() {
 
         // Update the state with the new preference data
         setPreferenceData(newPreferenceData);
+        sortDisplayData(newPreferenceData);
     };
+
+    const sortDisplayData = (newPreferenceData) => {
+        // Sort displayData so that enabled items come first, followed by disabled items
+        const sortedDisplayData = displayData.sort((a, b) => {
+            // Get rankings for both items
+            const rankA = newPreferenceData[a.key];
+            const rankB = newPreferenceData[b.key];
+
+            // If both items are enabled, sort by their ranking
+            if (rankA > 0 && rankB > 0) {
+                return rankA - rankB;
+            }
+
+            // If A is disabled (0) and B is enabled, A comes after B
+            if (rankA === 0 && rankB > 0) {
+                return 1;
+            }
+
+            // If B is disabled (0) and A is enabled, A comes before B
+            if (rankA > 0 && rankB === 0) {
+                return -1;
+            }
+
+            // If both are disabled, they can stay in the same order as before
+            return 0;
+        });
+
+        // Update displayData with the new sorted array
+        setDisplayData(sortedDisplayData);
+    };
+
 
     const renderPreferenceItem = (item, index) => {
         const ranking = preferenceData[item.key];
@@ -161,6 +195,7 @@ export default function PreferencesSetupView() {
                 onClickItem={(data, item, index) => handleItemClick(index)}
                 onDataChange={(data) => {
                     // Reordering logic should go here if needed
+                    setDisplayData(data);
                 }}
                 renderItem={(item, index) =>
                     renderPreferenceItem(displayData[index], index)

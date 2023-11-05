@@ -13,7 +13,8 @@ import {
     Keyboard,
 } from "react-native";
 import supabase from "../../config/supabase.js";
-import { ASSETS_TEMP_LOGO_URI } from "@env";
+import { BACKEND_ADDRESS, ASSETS_TEMP_LOGO_URI } from "@env";
+import axios from "axios";
 
 
 export default function AuthScreen() {
@@ -47,8 +48,32 @@ export default function AuthScreen() {
         });
 
         if (error) Alert.alert("Sign Up Error", error.message);
-        if (!session)
-            Alert.alert("Please check your inbox for email verification!");
+
+        if (session) {
+            const userId = session.user.id;
+
+            try {
+                const response = await axios.post(
+                    `${BACKEND_ADDRESS}/addPreference`,
+                    {
+                        id: userId,
+                        preference: {
+                            availability: 1,
+                            weather: 2,
+                            hourlyRate: 3,
+                        },
+                    }
+                );
+                console.log("Updated preference on server", response.data);
+
+            } catch (error) {
+                console.log(
+                    `Error while updating user preference: ${error.message}`
+                );
+                // An alert or banner can be added here to handle the error
+            }
+        }
+
         setLoading(false);
     }
 
