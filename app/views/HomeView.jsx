@@ -7,15 +7,53 @@ import {
     PermissionsAndroid,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import axios from "axios";
+import { BACKEND_ADDRESS } from "@env";
 import * as Location from "expo-location";
 
 
 export default function HomeView({ navigation }) {
+
     const [userLocation, setUserLocation] = useState(null);
+    const [carParks, setCarParks] = useState([]);
 
     useEffect(() => {
         getLocationAsync();
     }, []);
+
+    useEffect(() => {
+
+        const fetchCarParks = async () => {
+            if (userLocation) {
+                try {
+                    const carParksResponse = await axios.get(
+                        `${BACKEND_ADDRESS}/getNearbyParkingSlots`,
+                        {
+                            params: {
+                                latitude: userLocation.latitude,
+                                longitude: userLocation.longitude,
+                            },
+                        }
+                    );
+
+                    const carParksData = carParksResponse.data;
+
+                    if (carParksData.length > 0) {
+                        setCarParks(carParksData);
+                    } else {
+                        console.log("No nearby carparks found");
+                    }
+                } catch (error) {
+                    console.log(
+                        `Error getting nearby carparks on HomeView: ${error.message}`
+                    );
+                }
+            }
+        };
+
+        fetchCarParks();
+    }, [userLocation]);
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -53,6 +91,18 @@ export default function HomeView({ navigation }) {
                 {userLocation && (
                     <Marker coordinate={userLocation} title="You are here" />
                 )}
+
+                {carParks.map((carpark, index) => (
+                    <Marker
+                        key={index}
+                        coordinate={{
+                            latitude: carpark.latitude,
+                            longitude: carpark.longitude,
+                        }}
+                        title={`Available Lots: ${carpark.availableLots}`}
+                        description={carpark.development}
+                    />
+                ))}
             </MapView>
 
             <View style={styles.buttonContainer}>
