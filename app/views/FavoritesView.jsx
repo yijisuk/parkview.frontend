@@ -96,6 +96,7 @@ export default function FavoritesView() {
                         onRefresh={getFavLocation}
                     />
                 }
+                style={{paddingTop: 50}}
             >
                 {favLocations.length == 0 ? (
                     <Text style={favoritesViewStyles.placeholderText}>

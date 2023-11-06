@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import {
     View,
     Text,
+    TouchableOpacity,
     ActivityIndicator,
     Linking,
     Alert
@@ -286,7 +287,10 @@ export default function NavigationView({ route }) {
                 )}
             </MapView>
             {destinationAddress && (
-                <View style={navigationViewStyles.inner} title={destinationAddress}>
+                <View
+                    style={navigationViewStyles.inner}
+                    title={destinationAddress}
+                >
                     {isLoading ? (
                         <ActivityIndicator
                             size="large"
@@ -294,40 +298,60 @@ export default function NavigationView({ route }) {
                         />
                     ) : (
                         <>
-                            <Text>{destinationAddress}</Text>
+                            <Text style={commonStyles.fieldText3}>
+                                {destinationAddress}
+                            </Text>
                             {errorExists ? (
-                                <Text>An error has occurred.</Text>
+                                <Text style={commonStyles.fieldText3}>
+                                    An error has occurred.
+                                </Text>
                             ) : (
                                 <>
-                                    <Text>{parkingLotAddress}</Text>
-                                    <Text>Estimated Time: {estTime}</Text>
-                                    <Text>Estimated Distance: {estDist}</Text>
-                                    <View style={navigationViewStyles.buttonContainer}>
-                                        <Button
-                                            style={commonStyles.mainButton}
-                                            title="Navigate"
+                                    <Text style={commonStyles.fieldText3}>
+                                        {parkingLotAddress}
+                                    </Text>
+                                    <Text style={commonStyles.fieldText3}>
+                                        Estimated Time: {estTime}
+                                    </Text>
+                                    <Text style={commonStyles.fieldText3}>
+                                        {" "}
+                                        Estimated Distance: {estDist}
+                                    </Text>
+                                    <View
+                                        style={
+                                            navigationViewStyles.buttonContainer
+                                        }
+                                    >
+                                        <TouchableOpacity
+                                            style={navigationViewStyles.button}
                                             onPress={() =>
                                                 redirectToNavigation()
                                             }
-                                        />
-                                        <Button
-                                            style={commonStyles.mainButton}
-                                            icon={
-                                                <Icon
-                                                    name={
-                                                        isFavourite
-                                                            ? "star"
-                                                            : "star-border"
-                                                    }
-                                                    color="white"
-                                                />
-                                            }
+                                        >
+                                            <Text
+                                                style={commonStyles.buttonText3}
+                                            >
+                                                Navigate
+                                            </Text>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity
+                                            style={navigationViewStyles.button}
                                             onPress={() =>
                                                 isFavourite
                                                     ? deleteFromFavourites()
                                                     : addToFavourites()
                                             }
-                                        />
+                                        >
+                                            <Icon
+                                                name={
+                                                    isFavourite
+                                                        ? "star"
+                                                        : "star-border"
+                                                }
+                                                color="white"
+                                            />
+                                        </TouchableOpacity>
                                     </View>
                                 </>
                             )}

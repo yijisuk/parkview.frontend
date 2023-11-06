@@ -77,7 +77,7 @@ export const commonStyles = StyleSheet.create({
         ...buttonBasics("general"),
     },
     map: {
-        ...StyleSheet.absoluteFillObject,
+        // ...StyleSheet.absoluteFillObject,
         flex: 1,
     },
 });
