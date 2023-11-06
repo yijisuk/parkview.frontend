@@ -5,19 +5,22 @@ const colorScheme = useColorScheme();
 const isColorSchemeDark = colorScheme === "dark";
 
 const mainBlack = "#03071e";
-const mainWhite = "#f8f9fa";
+const mainWhite = "#fff";
 const mainThemeColor = "#09bc8a";
 
-const autoButtonColor = isColorSchemeDark ? mainWhite : mainBlack;
-const autoFieldElemColor = isColorSchemeDark ? mainWhite : mainBlack;
-const autoButtonTextColor = isColorSchemeDark ? mainBlack : mainWhite;
+const buttonColor = mainBlack;
+const fieldElemColor = mainBlack;
+const buttonTextColor = mainWhite;
+
+const viewBackgroundColor = mainWhite;
 
 export const commonToolkit = {
     isColorSchemeDark: isColorSchemeDark,
 
-    autoButtonColor: autoButtonColor,
-    autoFieldElemColor: autoFieldElemColor,
-    autoButtonTextColor: autoButtonTextColor,
+    buttonColor: buttonColor,
+    fieldElemColor: fieldElemColor,
+    buttonTextColor: buttonTextColor,
+    viewBackgroundColor: viewBackgroundColor,
 
     mainBlack: mainBlack,
     mainWhite: mainWhite,
@@ -27,7 +30,7 @@ export const commonToolkit = {
 const textBasics = (fontSize, type) => ({
     fontSize: fontSize,
     fontWeight: "bold",
-    color: type === "field" ? autoFieldElemColor : autoButtonTextColor,
+    color: type === "field" ? fieldElemColor : buttonTextColor,
 });
 
 const buttonBasics = (type) => ({
@@ -35,7 +38,7 @@ const buttonBasics = (type) => ({
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: type === "main" ? mainThemeColor : autoButtonColor,
+    backgroundColor: type === "main" ? mainThemeColor : buttonColor,
 });
 
 export const commonStyles = StyleSheet.create({
@@ -45,28 +48,27 @@ export const commonStyles = StyleSheet.create({
     },
     headerFieldText: {
         ...textBasics(26, "field"),
-        padding: 10,
     },
     headerButtonText: {
         ...textBasics(26, "button"),
     },
     fieldText1: {
-        ...textBasics(20, "field"),
+        ...textBasics(24, "field"),
     },
     buttonText1: {
-        ...textBasics(20, "button"),
+        ...textBasics(24, "button"),
     },
     fieldText2: {
-        ...textBasics(18, "field"),
+        ...textBasics(20, "field"),
     },
     buttonText2: {
-        ...textBasics(18, "button"),
+        ...textBasics(20, "button"),
     },
     fieldText3: {
-        ...textBasics(14, "field"),
+        ...textBasics(18, "field"),
     },
     buttonText3: {
-        ...textBasics(14, "button"),
+        ...textBasics(18, "button"),
     },
     mainButton: {
         ...buttonBasics("main"),
@@ -75,6 +77,7 @@ export const commonStyles = StyleSheet.create({
         ...buttonBasics("general"),
     },
     map: {
+        ...StyleSheet.absoluteFillObject,
         flex: 1,
     },
 });

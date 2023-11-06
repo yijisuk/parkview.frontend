@@ -9,8 +9,10 @@ const favoritesViewStyles = StyleSheet.create({
     },
     placeholderText: {
         ...commonStyles.fieldText1,
-        textAlign: "center",
-        padding: 20,
+        textAlign: "left",
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 50
     },
 });
 

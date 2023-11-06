@@ -1,21 +1,27 @@
 import { StyleSheet } from "react-native-web";
 import { commonStyles, commonToolkit } from "../commonStyles";
 
-
 const settingsViewStyles = StyleSheet.create({
     container: {
         ...commonStyles.container,
-        padding: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 50
+    },
+    greetingsText: {
+        ...commonStyles.fieldText1,
+        paddingTop: 10,
     },
     button: {
         ...commonStyles.generalButton,
         padding: 10,
-        margin: 10,
+        marginTop: 20,
+        height: 50,
     },
     closeModalButton: {
         // styles for close modal button
         marginTop: 15,
-        backgroundColor: commonToolkit.autoButtonColor,
+        backgroundColor: commonToolkit.buttonColor,
         padding: 30,
         borderRadius: 5,
         alignItems: "center",

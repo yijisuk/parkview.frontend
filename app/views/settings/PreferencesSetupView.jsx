@@ -21,7 +21,7 @@ import { BACKEND_ADDRESS } from "@env";
 const { width } = Dimensions.get("window");
 const parentWidth = width;
 const childrenWidth = width - 20;
-const childrenHeight = 70;
+const childrenHeight = 50;
 const circleRadius = (childrenHeight - 20) / 2;
 
 
@@ -219,24 +219,25 @@ export default function PreferencesSetupView() {
 }
 
 
+const itemBasics = {
+    width: childrenWidth,
+    height: childrenHeight,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: 10,
+};
+
+
 const displayItemStyles = StyleSheet.create({
     item: {
-        width: childrenWidth,
-        height: childrenHeight,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        ...itemBasics,
         backgroundColor: commonToolkit.mainThemeColor,
-        borderRadius: 6,
     },
     item_disabled: {
-        width: childrenWidth,
-        height: childrenHeight,
-        flexDirection: "row",
-        justifyContent: "space-between",
+        ...itemBasics,
         alignItems: "center",
         backgroundColor: "#d3d3d3",
-        borderRadius: 4,
     },
     item_icon_swipe: {
         width: circleRadius * 2,
@@ -246,14 +247,5 @@ const displayItemStyles = StyleSheet.create({
         marginRight: 20,
         justifyContent: "center",
         alignItems: "center",
-    },
-    item_disabled: {
-        width: childrenWidth,
-        height: childrenHeight,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#d3d3d3",
-        borderRadius: 4,
     },
 });

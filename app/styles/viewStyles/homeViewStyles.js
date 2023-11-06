@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { commonStyles } from "../commonStyles";
+import { commonStyles, commonToolkit } from "../commonStyles";
 
 const homeViewStyles = StyleSheet.create({
     buttonContainer: {
@@ -13,13 +13,14 @@ const homeViewStyles = StyleSheet.create({
         zIndex: 5,
     },
     searchButton: {
-        marginLeft: 20,
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: "white",
+        borderRadius: 10,
+        padding: 10,
         alignItems: "center",
         justifyContent: "center",
+        backgroundColor: commonToolkit.mainWhite,
+        marginLeft: 10,
+        width: 50,
+        height: 50,
     },
     searchIcon: {
         fontSize: 24,

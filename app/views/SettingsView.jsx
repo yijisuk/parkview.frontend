@@ -44,12 +44,15 @@ export default function SettingsView() {
         <SafeAreaView style={commonStyles.container}>
             <ScrollView>
                 <View style={settingsViewStyles.container}>
-                    <Text style={commonStyles.headerFieldText}>Hi {email}</Text>
+                    <Text style={settingsViewStyles.greetingsText}>Hi</Text>
+                    <Text style={settingsViewStyles.greetingsText}>
+                        {email}
+                    </Text>
                     <TouchableOpacity
                         onPress={() => setModalVisible(true)}
                         style={settingsViewStyles.button}
                     >
-                        <Text style={commonStyles.buttonText1}>
+                        <Text style={commonStyles.buttonText2}>
                             Preferences
                         </Text>
                     </TouchableOpacity>
@@ -57,7 +60,7 @@ export default function SettingsView() {
                         onPress={doLogOut}
                         style={settingsViewStyles.button}
                     >
-                        <Text style={commonStyles.buttonText1}>Logout</Text>
+                        <Text style={commonStyles.buttonText2}>Logout</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

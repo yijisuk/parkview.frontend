@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
     View,
+    Text,
     TouchableOpacity,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -10,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 import { GOOGLE_API_KEY } from "@env";
+import { commonStyles } from "../../styles/commonStyles";
 
 
 export default function TextSearchView() {

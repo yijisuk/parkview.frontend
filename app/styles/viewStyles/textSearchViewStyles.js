@@ -11,16 +11,16 @@ const textSearchViewStyles = StyleSheet.create({
     searchContainer: {
         flexDirection: "row",
         alignItems: "center",
-        borderColor: commonToolkit.autoFieldElemColor,
-        borderRadius: 4,
-        padding: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 50,
     },
     searchIconContainer: {
         padding: 10,
     },
     searchIcon: {
         fontSize: 24,
-        color: commonToolkit.autoFieldElemColor,
+        color: commonToolkit.fieldElemColor,
     },
 });
 

@@ -6,7 +6,7 @@ const preferencesSetupViewStyles = StyleSheet.create({
     header: {
         justifyContent: "center",
         alignItems: "flex-start",
-        marginTop: 40,
+        paddingTop: 50,
     },
     headerText: {
         ...commonStyles.fieldText1,
@@ -19,7 +19,7 @@ const preferencesSetupViewStyles = StyleSheet.create({
         flexShrink: 1,
     },
     itemText: {
-        ...commonStyles.fieldText2,
+        fontSize: 18,
         padding: 10,
     }
 });

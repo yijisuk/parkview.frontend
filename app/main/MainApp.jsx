@@ -20,13 +20,13 @@ function NavigationBar() {
                     let iconName;
 
                     if (route.name === "Home") {
-                        iconName = focused ? "home" : "home";
+                        iconName = focused ? "home-filled" : "home-filled";
                     } else if (route.name === "Search") {
                         iconName = focused ? "search" : "search";
                     } else if (route.name === "Navigation") {
                         iconName = focused ? "navigation" : "navigation";
                     } else if (route.name === "Favorites") {
-                        iconName = focused ? "star" : "star-border";
+                        iconName = focused ? "star" : "star";
                     } else if (route.name === "Settings") {
                         iconName = focused ? "settings" : "settings";
                     }
@@ -41,7 +41,7 @@ function NavigationBar() {
                     );
                 },
                 tabBarActiveTintColor: commonToolkit.mainThemeColor,
-                tabBarInactiveTintColor: commonToolkit.autoButtonColor,
+                tabBarInactiveTintColor: commonToolkit.buttonColor,
             })}
         >
             <Tab.Screen
@@ -49,14 +49,22 @@ function NavigationBar() {
                 component={HomeView}
                 options={{ headerShown: false }}
             />
-            <Tab.Screen name="Search" component={SearchView} />
+            <Tab.Screen
+                name="Search"
+                component={SearchView}
+                options={{ headerShown: false }}
+            />
             <Tab.Screen
                 name="Navigation"
                 component={NavigationView}
                 initialParams={{ destinationAddress: null }}
                 options={{ headerShown: false }}
             />
-            <Tab.Screen name="Favorites" component={FavoritesView} />
+            <Tab.Screen
+                name="Favorites"
+                component={FavoritesView}
+                options={{ headerShown: false }}
+            />
             <Tab.Screen
                 name="Settings"
                 component={SettingsView}

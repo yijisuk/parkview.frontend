@@ -9,13 +9,13 @@ const speechSearchViewStyles = StyleSheet.create({
     },
     textInput: {
         borderWidth: 1,
-        borderColor: commonToolkit.autoFieldElemColor,
+        borderColor: commonToolkit.fieldElemColor,
         padding: 10,
         marginBottom: 20,
     },
     speechSearchButton: {
         ...commonStyles.mainButton,
-        padding: 20
+        padding: 20,
     },
 });
 
