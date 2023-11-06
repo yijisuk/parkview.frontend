@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { commonStyles, commonToolkit } from "../commonStyles";
+import { Dimensions } from "react-native";
 
 const textSearchViewStyles = StyleSheet.create({
     container: {

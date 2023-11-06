@@ -3,15 +3,14 @@ import { commonStyles, commonToolkit } from "../commonStyles";
 
 
 const favoritesViewStyles = StyleSheet.create({
-    container: {
-        ...commonStyles.container,
+    header: {
+        height: 80,
         justifyContent: "center",
-    },
-    placeholderText: {
-        ...commonStyles.fieldText1,
-        textAlign: "center",
+        alignItems: "center",
+        marginTop: 40,
         padding: 20,
     },
+
 });
 
 export default favoritesViewStyles;

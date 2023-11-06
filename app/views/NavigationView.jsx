@@ -260,7 +260,7 @@ export default function NavigationView({ route }) {
     }
 
     return (
-        <View style={navigationViewStyles.container}>
+        <View style={commonStyles.container}>
             <MapView
                 ref={mapRef}
                 style={commonStyles.map}

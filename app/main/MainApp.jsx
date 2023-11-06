@@ -49,23 +49,18 @@ function NavigationBar() {
                 component={HomeView}
                 options={{ headerShown: false }}
             />
-            <Tab.Screen 
-                name="Search" 
-                component={SearchView} 
-            />
+            <Tab.Screen name="Search" component={SearchView} />
             <Tab.Screen
                 name="Navigation"
                 component={NavigationView}
                 initialParams={{ destinationAddress: null }}
                 options={{ headerShown: false }}
             />
-            <Tab.Screen 
-                name="Favorites" 
-                component={FavoritesView} 
-            />
-            <Tab.Screen 
-                name="Settings" 
-                component={SettingsView} 
+            <Tab.Screen name="Favorites" component={FavoritesView} />
+            <Tab.Screen
+                name="Settings"
+                component={SettingsView}
+                options={{ headerShown: false }}
             />
         </Tab.Navigator>
     );

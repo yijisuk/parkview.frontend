@@ -3,10 +3,6 @@ import { commonStyles, commonToolkit } from "../commonStyles";
 
 
 const navigationViewStyles = StyleSheet.create({
-    conatiner: {
-        ...commonStyles.container,
-        justifyContent: "center",
-    },
     buttonContainer: {
         flexDirection: "row",
         justifyContent: "center",

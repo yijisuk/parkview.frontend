@@ -24,6 +24,20 @@ export const commonToolkit = {
     mainThemeColor: mainThemeColor,
 };
 
+const textBasics = (fontSize, type) => ({
+    fontSize: fontSize,
+    fontWeight: "bold",
+    color: type === "field" ? autoFieldElemColor : autoButtonTextColor,
+});
+
+const buttonBasics = (type) => ({
+    borderRadius: 10,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: type === "main" ? mainThemeColor : autoButtonColor,
+});
+
 export const commonStyles = StyleSheet.create({
     container: {
         flex: 1,
@@ -31,6 +45,7 @@ export const commonStyles = StyleSheet.create({
     },
     headerFieldText: {
         ...textBasics(30, "field"),
+        padding: 10,
     },
     headerButtonText: {
         ...textBasics(30, "button"),
@@ -62,18 +77,4 @@ export const commonStyles = StyleSheet.create({
     map: {
         flex: 1,
     },
-});
-
-const textBasics = (fontSize, type) => ({
-    fontSize: fontSize,
-    fontWeight: "bold",
-    color: type === "field" ? autoFieldElemColor : autoButtonTextColor,
-});
-
-const buttonBasics = (type) => ({
-    borderRadius: 10,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: type === "main" ? mainThemeColor : autoButtonColor,
 });

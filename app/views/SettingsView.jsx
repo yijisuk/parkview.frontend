@@ -41,21 +41,23 @@ export default function SettingsView() {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={commonStyles.container}>
             <ScrollView>
                 <View style={settingsViewStyles.container}>
-                    <Text style={commonStyles.headerText}>Hi {email}</Text>
+                    <Text style={commonStyles.headerFieldText}>Hi {email}</Text>
                     <TouchableOpacity
                         onPress={() => setModalVisible(true)}
-                        style={commonStyles.generalButton}
+                        style={settingsViewStyles.button}
                     >
-                        <Text style={commonStyles.text1}>Preferences</Text>
+                        <Text style={commonStyles.buttonText1}>
+                            Preferences
+                        </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={doLogOut}
-                        style={commonStyles.generalButton}
+                        style={settingsViewStyles.button}
                     >
-                        <Text style={commonStyles.text1}>Logout</Text>
+                        <Text style={commonStyles.buttonText1}>Logout</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

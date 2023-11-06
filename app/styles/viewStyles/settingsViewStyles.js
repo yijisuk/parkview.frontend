@@ -7,6 +7,11 @@ const settingsViewStyles = StyleSheet.create({
         ...commonStyles.container,
         padding: 20,
     },
+    button: {
+        ...commonStyles.generalButton,
+        padding: 10,
+        margin: 10,
+    },
     closeModalButton: {
         // styles for close modal button
         marginTop: 15,
