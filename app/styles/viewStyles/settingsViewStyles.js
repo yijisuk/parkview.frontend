@@ -18,6 +18,7 @@ const settingsViewStyles = StyleSheet.create({
         backgroundColor: commonToolkit.autoButtonColor,
         padding: 30,
         borderRadius: 5,
+        alignItems: "center",
     },
     modal: {
         // custom styles for modal

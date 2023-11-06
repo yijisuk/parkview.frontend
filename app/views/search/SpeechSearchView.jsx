@@ -16,12 +16,12 @@ import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../../config/supabase.js";
 import { PARKVIEW_STORAGE_BUCKET, BACKEND_ADDRESS } from "@env";
+import { commonStyles } from "../../styles/commonStyles.js";
 
 
 export default function SpeechSearchView() {
     const navigation = useNavigation();
 
-    const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
     const [user, setUser] = useState(null);
     const [destinationAddress, setDestinationAddress] = useState(null);
@@ -88,14 +88,12 @@ export default function SpeechSearchView() {
             recordingInstance.current = recording;
             setRecording(recording);
 
-            setTranscript("Recording started");
         } catch (err) {
             console.error("Failed to start recording", err);
         }
     }
 
     async function handleRecordedFile() {
-        setTranscript("Stopping recording..");
 
         setRecording(undefined);
         await recordingInstance.current.stopAndUnloadAsync();
@@ -104,7 +102,6 @@ export default function SpeechSearchView() {
         });
         const uri = recordingInstance.current.getURI();
         console.log("Recording stopped and stored at", uri);
-        setTranscript("");
 
         await processAudioToDestination(uri);
     }
@@ -172,17 +169,11 @@ export default function SpeechSearchView() {
 
     return (
         <View style={speechSearchViewStyles.container}>
-            <TextInput
-                value={transcript}
-                editable={false}
-                placeholder="Tap button to start recording"
-                style={speechSearchViewStyles.textInput}
-            />
             <TouchableOpacity
                 style={speechSearchViewStyles.speechSearchButton}
                 onPress={recording ? handleRecordedFile : startRecording}
             >
-                <Text style={speechSearchViewStyles.buttonText3}>
+                <Text style={commonStyles.buttonText3}>
                     {recording ? "Stop Recording" : "Start Recording"}
                 </Text>
             </TouchableOpacity>

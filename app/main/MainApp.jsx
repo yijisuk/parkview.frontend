@@ -1,3 +1,4 @@
+import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -8,7 +9,6 @@ import SearchView from "../views/SearchView";
 import FavoritesView from "../views/FavoritesView";
 import SettingsView from "../views/SettingsView";
 import NavigationView from "../views/NavigationView";
-
 
 const Tab = createBottomTabNavigator();
 

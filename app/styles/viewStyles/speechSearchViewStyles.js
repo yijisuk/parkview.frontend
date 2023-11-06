@@ -15,6 +15,7 @@ const speechSearchViewStyles = StyleSheet.create({
     },
     speechSearchButton: {
         ...commonStyles.mainButton,
+        padding: 20
     },
 });
 

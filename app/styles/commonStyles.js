@@ -44,11 +44,11 @@ export const commonStyles = StyleSheet.create({
         backgroundColor: isColorSchemeDark ? mainBlack : mainWhite,
     },
     headerFieldText: {
-        ...textBasics(30, "field"),
+        ...textBasics(26, "field"),
         padding: 10,
     },
     headerButtonText: {
-        ...textBasics(30, "button"),
+        ...textBasics(26, "button"),
     },
     fieldText1: {
         ...textBasics(20, "field"),

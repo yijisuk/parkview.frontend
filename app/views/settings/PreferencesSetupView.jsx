@@ -3,14 +3,13 @@ import {
     Dimensions,
     SafeAreaView,
     View,
-    TouchableOpacity,
     StyleSheet,
     Alert,
     Text,
 } from "react-native";
 import { AutoDragSortableView } from "react-native-drag-sort";
-import { commonStyles } from "../../styles/commonStyles";
-import favoritesViewStyles from "../../styles/viewStyles/favoritesViewStyles";
+import { commonStyles, commonToolkit } from "../../styles/commonStyles";
+import preferencesSetupViewStyles from "../../styles/viewStyles/preferencesSetupViewStyles";
 
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
@@ -22,7 +21,9 @@ import { BACKEND_ADDRESS } from "@env";
 const { width } = Dimensions.get("window");
 const parentWidth = width;
 const childrenWidth = width - 20;
-const childrenHeight = 48;
+const childrenHeight = 70;
+const circleRadius = (childrenHeight - 20) / 2;
+
 
 export default function PreferencesSetupView() {
 
@@ -174,9 +175,11 @@ export default function PreferencesSetupView() {
                 }
                 key={item.key}
             >
-                <Text style={commonStyles.fieldText3}>{item.text}</Text>
+                <Text style={preferencesSetupViewStyles.itemText}>
+                    {item.text}
+                </Text>
                 <View style={displayItemStyles.item_icon_swipe}>
-                    {ranking !== 0 && <Text>{ranking}</Text>}
+                    {ranking !== 0 && <Text style={commonStyles.fieldText3}>{ranking}</Text>}
                 </View>
             </View>
         );
@@ -184,9 +187,11 @@ export default function PreferencesSetupView() {
 
     return (
         <SafeAreaView style={commonStyles.container}>
-            <View style={favoritesViewStyles.header}>
-                <Text style={commonStyles.fieldText1}>Preferences</Text>
-                <Text style={commonStyles.fieldText2}>
+            <View style={preferencesSetupViewStyles.header}>
+                <Text style={preferencesSetupViewStyles.headerText}>
+                    Preferences
+                </Text>
+                <Text style={preferencesSetupViewStyles.descriptionText}>
                     Which parking locations would you prefer?
                 </Text>
             </View>
@@ -215,7 +220,6 @@ export default function PreferencesSetupView() {
 
 
 const displayItemStyles = StyleSheet.create({
-    
     item: {
         width: childrenWidth,
         height: childrenHeight,
@@ -235,19 +239,13 @@ const displayItemStyles = StyleSheet.create({
         borderRadius: 4,
     },
     item_icon_swipe: {
-        width: childrenHeight - 10,
-        height: childrenHeight - 10,
+        width: circleRadius * 2,
+        height: circleRadius * 2,
         backgroundColor: "#fff",
-        borderRadius: (childrenHeight - 10) / 2,
+        borderRadius: circleRadius,
         marginRight: 20,
         justifyContent: "center",
         alignItems: "center",
-    },
-    item_text: {
-        color: "#fff",
-        fontSize: 20,
-        marginLeft: 20,
-        fontWeight: "bold",
     },
     item_disabled: {
         width: childrenWidth,

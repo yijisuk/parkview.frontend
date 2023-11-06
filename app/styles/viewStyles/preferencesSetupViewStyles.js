@@ -2,15 +2,27 @@ import { StyleSheet } from "react-native-web";
 import { commonStyles, commonToolkit } from "../commonStyles";
 
 
-const favoritesViewStyles = StyleSheet.create({
+const preferencesSetupViewStyles = StyleSheet.create({
     header: {
-        height: 80,
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: "flex-start",
         marginTop: 40,
-        padding: 20,
     },
-
+    headerText: {
+        ...commonStyles.fieldText1,
+        padding: 10,
+        flexShrink: 1,
+    },
+    descriptionText: {
+        ...commonStyles.fieldText2,
+        padding: 10,
+        flexShrink: 1,
+    },
+    itemText: {
+        ...commonStyles.fieldText2,
+        padding: 10,
+    }
 });
 
-export default favoritesViewStyles;
+
+export default preferencesSetupViewStyles;
