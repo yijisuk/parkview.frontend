@@ -3,22 +3,27 @@ import {
     Dimensions,
     SafeAreaView,
     View,
-    TouchableOpacity,
     StyleSheet,
     Alert,
     Text,
 } from "react-native";
-import { FAB } from "react-native-elements";
 import { AutoDragSortableView } from "react-native-drag-sort";
-import { BACKEND_ADDRESS } from "@env";
-import { useNavigation } from "@react-navigation/native";
-import supabase from "../../../config/supabase";
+import { commonStyles, commonToolkit } from "../../styles/commonStyles";
+import preferencesSetupViewStyles from "../../styles/viewStyles/preferencesSetupViewStyles";
+
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
+
+import supabase from "../../../config/supabase";
+import { BACKEND_ADDRESS } from "@env";
+
 
 const { width } = Dimensions.get("window");
 const parentWidth = width;
 const childrenWidth = width - 20;
-const childrenHeight = 48;
+const childrenHeight = 50;
+const circleRadius = (childrenHeight - 20) / 2;
+
 
 export default function PreferencesSetupView() {
 
@@ -163,22 +168,30 @@ export default function PreferencesSetupView() {
         const ranking = preferenceData[item.key];
         return (
             <View
-                style={ranking === 0 ? styles.item_disabled : styles.item}
+                style={
+                    ranking === 0
+                        ? displayItemStyles.item_disabled
+                        : displayItemStyles.item
+                }
                 key={item.key}
             >
-                <Text style={styles.item_text}>{item.text}</Text>
-                <View style={styles.item_icon_swipe}>
-                    {ranking !== 0 && <Text>{ranking}</Text>}
+                <Text style={preferencesSetupViewStyles.itemText}>
+                    {item.text}
+                </Text>
+                <View style={displayItemStyles.item_icon_swipe}>
+                    {ranking !== 0 && <Text style={commonStyles.fieldText3}>{ranking}</Text>}
                 </View>
             </View>
         );
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.header_title}>Preferences</Text>
-                <Text style={styles.header_subtitle}>
+        <SafeAreaView style={commonStyles.container}>
+            <View style={preferencesSetupViewStyles.header}>
+                <Text style={preferencesSetupViewStyles.headerText}>
+                    Preferences
+                </Text>
+                <Text style={preferencesSetupViewStyles.descriptionText}>
                     Which parking locations would you prefer?
                 </Text>
             </View>
@@ -205,62 +218,34 @@ export default function PreferencesSetupView() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#f0f0f0",
-    },
-    header: {
-        height: 80,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 40,
-    },
-    header_title: {
-        color: "#333",
-        fontSize: 24,
-        fontWeight: "bold",
-        width: childrenWidth,
-        marginBottom: 10,
-    },
-    header_subtitle: {
-        color: "#333",
-        fontSize: 20,
-        fontWeight: "bold",
-        width: childrenWidth,
-        marginBottom: 20,
-    },
+
+const itemBasics = {
+    width: childrenWidth,
+    height: childrenHeight,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: 10,
+};
+
+
+const displayItemStyles = StyleSheet.create({
     item: {
-        width: childrenWidth,
-        height: childrenHeight,
-        flexDirection: "row",
-        justifyContent: "space-between",
+        ...itemBasics,
+        backgroundColor: commonToolkit.mainThemeColor,
+    },
+    item_disabled: {
+        ...itemBasics,
         alignItems: "center",
-        backgroundColor: "#2ecc71",
-        borderRadius: 4,
+        backgroundColor: "#d3d3d3",
     },
     item_icon_swipe: {
-        width: childrenHeight - 10,
-        height: childrenHeight - 10,
+        width: circleRadius * 2,
+        height: circleRadius * 2,
         backgroundColor: "#fff",
-        borderRadius: (childrenHeight - 10) / 2,
+        borderRadius: circleRadius,
         marginRight: 20,
         justifyContent: "center",
         alignItems: "center",
-    },
-    item_text: {
-        color: "#fff",
-        fontSize: 20,
-        marginLeft: 20,
-        fontWeight: "bold",
-    },
-    item_disabled: {
-        width: childrenWidth,
-        height: childrenHeight,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#d3d3d3",
-        borderRadius: 4,
     },
 });

@@ -4,9 +4,10 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    StyleSheet,
-    Alert
+    Alert,
 } from "react-native";
+import speechSearchViewStyles from "../../styles/viewStyles/speechSearchViewStyles";
+
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
@@ -15,13 +16,12 @@ import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../../config/supabase.js";
 import { PARKVIEW_STORAGE_BUCKET, BACKEND_ADDRESS } from "@env";
+import { commonStyles } from "../../styles/commonStyles.js";
 
 
 export default function SpeechSearchView() {
-
     const navigation = useNavigation();
 
-    const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
     const [user, setUser] = useState(null);
     const [destinationAddress, setDestinationAddress] = useState(null);
@@ -29,13 +29,16 @@ export default function SpeechSearchView() {
 
     // Initial load for user information
     useEffect(() => {
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            if (user) {
-                setUser(user);
-            } else {
-                // Alert.alert("Error Accessing User Data");
-            }
-        }).catch((error) => console.log(error));
+        supabase.auth
+            .getUser()
+            .then(({ data: { user } }) => {
+                if (user) {
+                    setUser(user);
+                } else {
+                    // Alert.alert("Error Accessing User Data");
+                }
+            })
+            .catch((error) => console.log(error));
     });
 
     useEffect(() => {
@@ -71,9 +74,6 @@ export default function SpeechSearchView() {
         }
     }, [destinationAddress, navigation]);
 
-
-
-
     async function startRecording() {
         try {
             await Audio.requestPermissionsAsync();
@@ -88,14 +88,12 @@ export default function SpeechSearchView() {
             recordingInstance.current = recording;
             setRecording(recording);
 
-            setTranscript("Recording started");
         } catch (err) {
             console.error("Failed to start recording", err);
         }
     }
 
     async function handleRecordedFile() {
-        setTranscript("Stopping recording..");
 
         setRecording(undefined);
         await recordingInstance.current.stopAndUnloadAsync();
@@ -104,7 +102,6 @@ export default function SpeechSearchView() {
         });
         const uri = recordingInstance.current.getURI();
         console.log("Recording stopped and stored at", uri);
-        setTranscript("");
 
         await processAudioToDestination(uri);
     }
@@ -153,7 +150,6 @@ export default function SpeechSearchView() {
                         error.message
                     );
                 });
-
         } catch (error) {
             console.error("An error occurred:", error.message);
         }
@@ -171,46 +167,16 @@ export default function SpeechSearchView() {
         }
     }
 
-
     return (
-        <View style={styles.container}>
-            <TextInput
-                value={transcript}
-                editable={false}
-                placeholder="Tap button to start recording"
-                style={styles.textInput}
-            />
+        <View style={speechSearchViewStyles.container}>
             <TouchableOpacity
-                style={styles.button}
+                style={speechSearchViewStyles.speechSearchButton}
                 onPress={recording ? handleRecordedFile : startRecording}
             >
-                <Text style={styles.buttonText}>
+                <Text style={commonStyles.buttonText3}>
                     {recording ? "Stop Recording" : "Start Recording"}
                 </Text>
             </TouchableOpacity>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-        flex: 1,
-        justifyContent: "center",
-    },
-    textInput: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        padding: 10,
-        marginBottom: 20,
-    },
-    button: {
-        backgroundColor: "#2196F3",
-        padding: 10,
-        borderRadius: 5,
-    },
-    buttonText: {
-        color: "white",
-        textAlign: "center",
-    },
-});

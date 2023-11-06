@@ -1,56 +1,53 @@
-import React, { useEffect, useState }  from "react";
-import { 
-    View, 
-    StyleSheet, 
-    ScrollView, 
-    TouchableOpacity, 
-    ActivityIndicator,
+import React, { useEffect, useState } from "react";
+import {
+    StyleSheet,
+    ScrollView,
     RefreshControl,
     SafeAreaView,
-    TouchableHighlight,
-    Alert
+    Alert,
 } from "react-native";
-import {
-    Text,
-    Button,
-    ListItem,
-    Icon
-} from "react-native-elements";
+import { Text, Button, ListItem, Icon } from "react-native-elements";
+import { commonStyles, commonToolkit } from "../styles/commonStyles";
+import favoritesViewStyles from "../styles/viewStyles/favoritesViewStyles";
+
 import { useNavigation } from "@react-navigation/native";
-import supabase from "../../config/supabase";
-import { BACKEND_ADDRESS } from "@env";
 import axios from "axios";
 
+import supabase from "../../config/supabase";
+import { BACKEND_ADDRESS } from "@env";
 
 export default function FavoritesView() {
-
     const [user, setUser] = useState(null);
     const [refreshing, setRefreshing] = React.useState(false);
     const [favLocations, setFavLocations] = useState([]);
 
-
     //inital load
-    useEffect(()=>{
+    useEffect(() => {
         setRefreshing(true);
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            if (user) {
-                setUser(user);
-            } else {
-                Alert.alert("Error Accessing User Data");
-                setRefreshing(false);
-            }
-        }).catch((error) => console.log(error));
+        supabase.auth
+            .getUser()
+            .then(({ data: { user } }) => {
+                if (user) {
+                    setUser(user);
+                } else {
+                    Alert.alert("Error Accessing User Data");
+                    setRefreshing(false);
+                }
+            })
+            .catch((error) => console.log(error));
     }, []);
 
-    //This to run after the user location is available, if not would return an empty list 
+    //This to run after the user location is available, if not would return an empty list
     useEffect(() => {
-        if (user){
-            getFavLocation().then(() => setRefreshing(false)).catch((error) => console.log(error));
+        if (user) {
+            getFavLocation()
+                .then(() => setRefreshing(false))
+                .catch((error) => console.log(error));
         }
-    }, [user])
+    }, [user]);
 
     //API call to GET /favouriteLocation
-    async function getFavLocation(){
+    async function getFavLocation() {
         setRefreshing(true);
         axios
             .get(
@@ -66,7 +63,7 @@ export default function FavoritesView() {
     }
 
     //API call to DELETE /favouriteLocation
-    async function deleteFavLocation(location){
+    async function deleteFavLocation(location) {
         axios
             .delete(
                 `${BACKEND_ADDRESS}/deleteFavouriteLocation?id=${user.identities[0].id}&location=${location}`
@@ -81,18 +78,17 @@ export default function FavoritesView() {
             });
     }
 
-    
     //**To change to point to API for recommendation -> then navigation
     const navigation = useNavigation();
-    
-    function handleSearch (location) {
+
+    function handleSearch(location) {
         navigation.navigate("Navigation", {
             destinationAddress: location,
         });
-    };
+    }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={favoritesViewStyles.container}>
             <ScrollView
                 refreshControl={
                     <RefreshControl
@@ -102,7 +98,9 @@ export default function FavoritesView() {
                 }
             >
                 {favLocations.length == 0 ? (
-                    <Text style={styles.placeholderText}>You have no favourite location saved</Text>
+                    <Text style={favoritesViewStyles.placeholderText}>
+                        You have no favourite location saved
+                    </Text>
                 ) : (
                     favLocations.map((location, i) => (
                         <LocationList
@@ -120,7 +118,6 @@ export default function FavoritesView() {
     );
 }
 
-
 const LocationList = ({ location, handleSearch, deleteFavLocation }) => {
     return (
         <ListItem.Swipeable
@@ -128,14 +125,14 @@ const LocationList = ({ location, handleSearch, deleteFavLocation }) => {
             leftContent={
                 <Button
                     onPress={deleteFavLocation}
-                    icon={{ name: "delete", color: "white" }}
+                    icon={{ name: "delete", color: commonToolkit.buttonColor }}
                     buttonStyle={{ minHeight: "100%", backgroundColor: "red" }}
                 />
             }
             minSlideWidth={"10%"}
             onSwipeEnd={() => console.log("swipe")}
         >
-            <Icon name="star" color={styles.favIcon.color} />
+            <Icon name="star" color={commonToolkit.mainThemeColor} />
             <ListItem.Content>
                 <ListItem.Title>{location}</ListItem.Title>
             </ListItem.Content>
@@ -143,20 +140,3 @@ const LocationList = ({ location, handleSearch, deleteFavLocation }) => {
         </ListItem.Swipeable>
     );
 };
-
-
-//** To do stylesheet for FavouritePage 
-const styles = StyleSheet.create({
-    container: {
-        justifyContent: "center",
-        flex: 1,
-    },
-    favIcon: {
-        color: "blue",
-    },
-    placeholderText: {
-        fontSize: 18,
-        fontWeight: "bold",
-        padding: 20
-    },
-});
