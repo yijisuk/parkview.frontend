@@ -4,9 +4,10 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    StyleSheet,
-    Alert
+    Alert,
 } from "react-native";
+import speechSearchViewStyles from "../../styles/viewStyles/speechSearchViewStyles";
+
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
@@ -18,7 +19,6 @@ import { PARKVIEW_STORAGE_BUCKET, BACKEND_ADDRESS } from "@env";
 
 
 export default function SpeechSearchView() {
-
     const navigation = useNavigation();
 
     const [transcript, setTranscript] = useState("");
@@ -29,13 +29,16 @@ export default function SpeechSearchView() {
 
     // Initial load for user information
     useEffect(() => {
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            if (user) {
-                setUser(user);
-            } else {
-                // Alert.alert("Error Accessing User Data");
-            }
-        }).catch((error) => console.log(error));
+        supabase.auth
+            .getUser()
+            .then(({ data: { user } }) => {
+                if (user) {
+                    setUser(user);
+                } else {
+                    // Alert.alert("Error Accessing User Data");
+                }
+            })
+            .catch((error) => console.log(error));
     });
 
     useEffect(() => {
@@ -70,9 +73,6 @@ export default function SpeechSearchView() {
             );
         }
     }, [destinationAddress, navigation]);
-
-
-
 
     async function startRecording() {
         try {
@@ -153,7 +153,6 @@ export default function SpeechSearchView() {
                         error.message
                     );
                 });
-
         } catch (error) {
             console.error("An error occurred:", error.message);
         }
@@ -171,46 +170,22 @@ export default function SpeechSearchView() {
         }
     }
 
-
     return (
-        <View style={styles.container}>
+        <View style={speechSearchViewStyles.container}>
             <TextInput
                 value={transcript}
                 editable={false}
                 placeholder="Tap button to start recording"
-                style={styles.textInput}
+                style={speechSearchViewStyles.textInput}
             />
             <TouchableOpacity
-                style={styles.button}
+                style={speechSearchViewStyles.speechSearchButton}
                 onPress={recording ? handleRecordedFile : startRecording}
             >
-                <Text style={styles.buttonText}>
+                <Text style={speechSearchViewStyles.buttonText3}>
                     {recording ? "Stop Recording" : "Start Recording"}
                 </Text>
             </TouchableOpacity>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-        flex: 1,
-        justifyContent: "center",
-    },
-    textInput: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        padding: 10,
-        marginBottom: 20,
-    },
-    button: {
-        backgroundColor: "#2196F3",
-        padding: 10,
-        borderRadius: 5,
-    },
-    buttonText: {
-        color: "white",
-        textAlign: "center",
-    },
-});

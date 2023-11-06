@@ -1,13 +1,9 @@
 import React, { useEffect, useState }  from "react";
 import { 
-    View, 
     StyleSheet, 
     ScrollView, 
-    TouchableOpacity, 
-    ActivityIndicator,
     RefreshControl,
     SafeAreaView,
-    TouchableHighlight,
     Alert
 } from "react-native";
 import {
@@ -16,10 +12,14 @@ import {
     ListItem,
     Icon
 } from "react-native-elements";
+import { commonStyles, commonToolkit } from "../styles/commonStyles";
+import favoritesViewStyles from "../styles/viewStyles/favoritesViewStyles";
+
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+
 import supabase from "../../config/supabase";
 import { BACKEND_ADDRESS } from "@env";
-import axios from "axios";
 
 
 export default function FavoritesView() {
@@ -92,7 +92,7 @@ export default function FavoritesView() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={favoritesViewStyles.container}>
             <ScrollView
                 refreshControl={
                     <RefreshControl
@@ -102,7 +102,9 @@ export default function FavoritesView() {
                 }
             >
                 {favLocations.length == 0 ? (
-                    <Text style={styles.placeholderText}>You have no favourite location saved</Text>
+                    <Text style={favoritesViewStyles.placeholderText}>
+                        You have no favourite location saved
+                    </Text>
                 ) : (
                     favLocations.map((location, i) => (
                         <LocationList
@@ -128,14 +130,14 @@ const LocationList = ({ location, handleSearch, deleteFavLocation }) => {
             leftContent={
                 <Button
                     onPress={deleteFavLocation}
-                    icon={{ name: "delete", color: "white" }}
+                    icon={{ name: "delete", color: commonToolkit.autoButtonColor }}
                     buttonStyle={{ minHeight: "100%", backgroundColor: "red" }}
                 />
             }
             minSlideWidth={"10%"}
             onSwipeEnd={() => console.log("swipe")}
         >
-            <Icon name="star" color={styles.favIcon.color} />
+            <Icon name="star" color={commonToolkit.mainThemeColor} />
             <ListItem.Content>
                 <ListItem.Title>{location}</ListItem.Title>
             </ListItem.Content>
@@ -143,20 +145,3 @@ const LocationList = ({ location, handleSearch, deleteFavLocation }) => {
         </ListItem.Swipeable>
     );
 };
-
-
-//** To do stylesheet for FavouritePage 
-const styles = StyleSheet.create({
-    container: {
-        justifyContent: "center",
-        flex: 1,
-    },
-    favIcon: {
-        color: "blue",
-    },
-    placeholderText: {
-        fontSize: 18,
-        fontWeight: "bold",
-        padding: 20
-    },
-});

@@ -1,4 +1,3 @@
-import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
     ScrollView,
@@ -6,10 +5,13 @@ import {
     View,
     Text,
     TouchableOpacity,
-    StyleSheet,
     Alert,
 } from "react-native";
+import { commonStyles } from "../styles/commonStyles";
+import settingsViewStyles from "../styles/viewStyles/settingsViewStyles";
+
 import Modal from "react-native-modal";
+
 import PreferencesSetupView from "./settings/PreferencesSetupView";
 import supabase from "../../config/supabase";
 
@@ -41,16 +43,19 @@ export default function SettingsView() {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView>
-                <View style={styles.container}>
-                    <Text style={styles.emailText}>Hi {email}</Text>
+                <View style={settingsViewStyles.container}>
+                    <Text style={commonStyles.headerText}>Hi {email}</Text>
                     <TouchableOpacity
                         onPress={() => setModalVisible(true)}
-                        style={styles.menuItem}
+                        style={commonStyles.generalButton}
                     >
-                        <Text style={styles.menuItemText}>Preferences</Text>
+                        <Text style={commonStyles.text1}>Preferences</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={doLogOut} style={styles.button}>
-                        <Text style={styles.buttonText}>Logout</Text>
+                    <TouchableOpacity
+                        onPress={doLogOut}
+                        style={commonStyles.generalButton}
+                    >
+                        <Text style={commonStyles.text1}>Logout</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -59,73 +64,18 @@ export default function SettingsView() {
                 onBackdropPress={() => setModalVisible(false)} // Close the modal when the backdrop is pressed
                 onSwipeComplete={() => setModalVisible(false)} // Optional: close the modal by swiping
                 swipeDirection="left" // Optional: set the swipe direction
-                style={styles.modal} // Custom styles for the modal
+                style={settingsViewStyles.modal} // Custom styles for the modal
                 animationIn="slideInRight" // Change the animation
                 animationOut="slideOutRight" // Change the animation
             >
                 <PreferencesSetupView />
                 <TouchableOpacity
                     onPress={() => setModalVisible(!modalVisible)}
-                    style={styles.closeModalButton}
+                    style={settingsViewStyles.closeModalButton}
                 >
-                    <Text style={styles.closeModalButtonText}>Close</Text>
+                    <Text style={commonStyles.buttonText2}>Close</Text>
                 </TouchableOpacity>
             </Modal>
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        // styles for the container
-        padding: 20,
-    },
-    emailText: {
-        // styles for the email text
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 15,
-    },
-    menuItem: {
-        // styles for menu item
-        backgroundColor: "#DDD",
-        padding: 15,
-        borderRadius: 5,
-    },
-    menuItemText: {
-        // styles for menu item text
-        fontSize: 18,
-        textAlign: "center",
-    },
-    button: {
-        // styles for logout button
-        backgroundColor: "black",
-        padding: 15,
-        borderRadius: 5,
-        marginTop: 15,
-    },
-    buttonText: {
-        // styles for button text
-        fontSize: 18,
-        color: "white",
-        textAlign: "center",
-    },
-    closeModalButton: {
-        // styles for close modal button
-        marginTop: 15,
-        backgroundColor: "black",
-        padding: 30,
-        borderRadius: 5,
-    },
-    closeModalButtonText: {
-        // styles for close modal button text
-        fontSize: 18,
-        color: "white",
-        textAlign: "center",
-    },
-    modal: {
-        // custom styles for modal
-        margin: 0, // This is important to ensure the modal shows up from the side
-        justifyContent: "flex-end", // Align to the bottom of the screen
-    },
-});

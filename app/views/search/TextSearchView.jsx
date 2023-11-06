@@ -1,21 +1,18 @@
 import React, { useState } from "react";
 import {
     View,
-    TextInput,
-    FlatList,
-    Text,
     TouchableOpacity,
-    Dimensions,
-    StyleSheet,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import textSearchViewStyles from "../../styles/viewStyles/textSearchViewStyles";
+
 import { useNavigation } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+
 import { GOOGLE_API_KEY } from "@env";
 
 
 export default function TextSearchView() {
-    
     const data = [
         // {
         //     id: "1",
@@ -53,8 +50,8 @@ export default function TextSearchView() {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.searchContainer}>
+        <View style={textSearchViewStyles.container}>
+            <View style={textSearchViewStyles.searchContainer}>
                 <GooglePlacesAutocomplete
                     placeholder="Search Location"
                     onPress={(data, details = null) => {
@@ -68,30 +65,14 @@ export default function TextSearchView() {
                     enablePoweredByContainer={false}
                 />
                 <TouchableOpacity
-                    style={styles.iconContainer}
+                    style={textSearchViewStyles.searchIconContainer}
                     onPress={handleSearch}
                 >
-                    <MaterialIcons name="search" size={24} color="black" />
+                    <MaterialIcons 
+                        name="search" 
+                        style={textSearchViewStyles.searchIcon} />
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: Dimensions.get("window").width,
-        paddingHorizontal: 10,
-    },
-    searchContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        borderColor: "#ddd",
-        borderRadius: 4,
-        padding: 10,
-    },
-    iconContainer: {
-        padding: 10,
-    },
-});

@@ -2,19 +2,20 @@ import React, { useEffect, useState, useRef } from "react";
 import {
     View,
     Text,
-    StyleSheet,
-    TouchableOpacity,
-    PermissionsAndroid,
     ActivityIndicator,
     Linking,
     Alert
 } from "react-native";
+import { Button, Icon } from "react-native-elements";
+import { commonStyles, commonToolkit } from "../styles/commonStyles";
+import navigationViewStyles from "../styles/viewStyles/navigationViewStyles";
+
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
-import { Button, Icon } from "react-native-elements";
-import { BACKEND_ADDRESS } from "@env";
-import supabase from "../../config/supabase";
 import axios from "axios";
+
+import supabase from "../../config/supabase";
+import { BACKEND_ADDRESS } from "@env";
 
 
 export default function NavigationView({ route }) {
@@ -259,10 +260,10 @@ export default function NavigationView({ route }) {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={navigationViewStyles.container}>
             <MapView
                 ref={mapRef}
-                style={styles.map}
+                style={commonStyles.map}
                 region={userLocationCoords}
                 toolbarEnabled={false}
                 showsUserLocation={true}
@@ -275,7 +276,7 @@ export default function NavigationView({ route }) {
                         <Polyline
                             coordinates={routeCoords}
                             strokeWidth={5}
-                            strokeColor="#007AFF"
+                            strokeColor={commonToolkit.mainThemeColor}
                         />
                         <Marker
                             coordinate={destinationCoords}
@@ -285,9 +286,12 @@ export default function NavigationView({ route }) {
                 )}
             </MapView>
             {destinationAddress && (
-                <View style={styles.inner} title={destinationAddress}>
+                <View style={navigationViewStyles.inner} title={destinationAddress}>
                     {isLoading ? (
-                        <ActivityIndicator size="large" color="#007AFF" />
+                        <ActivityIndicator
+                            size="large"
+                            color={commonToolkit.mainThemeColor}
+                        />
                     ) : (
                         <>
                             <Text>{destinationAddress}</Text>
@@ -298,16 +302,16 @@ export default function NavigationView({ route }) {
                                     <Text>{parkingLotAddress}</Text>
                                     <Text>Estimated Time: {estTime}</Text>
                                     <Text>Estimated Distance: {estDist}</Text>
-                                    <View style={styles.buttonContainer}>
+                                    <View style={navigationViewStyles.buttonContainer}>
                                         <Button
-                                            style={styles.button}
+                                            style={commonStyles.mainButton}
                                             title="Navigate"
                                             onPress={() =>
                                                 redirectToNavigation()
                                             }
                                         />
                                         <Button
-                                            style={styles.button}
+                                            style={commonStyles.mainButton}
                                             icon={
                                                 <Icon
                                                     name={
@@ -334,30 +338,3 @@ export default function NavigationView({ route }) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        justifyContent: "center",
-        flex: 1,
-    },
-    map: {
-        flex: 3,
-    },
-    buttonContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-    },
-    inner: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    button: {
-        margin: 5,
-    },
-    fitScreenStyle: {
-        position: "absolute",
-        right: 20,
-        bottom: 20,
-    },
-});

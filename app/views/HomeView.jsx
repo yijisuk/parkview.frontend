@@ -2,18 +2,19 @@ import React, { useEffect, useState, useLayoutEffect } from "react";
 import {
     View,
     Text,
-    StyleSheet,
     TouchableOpacity,
-    PermissionsAndroid,
 } from "react-native";
+import { commonStyles } from "../styles/commonStyles";
+import homeViewStyles from "../styles/viewStyles/homeViewStyles";
+
 import MapView, { Marker } from "react-native-maps";
-import axios from "axios";
-import { BACKEND_ADDRESS } from "@env";
 import * as Location from "expo-location";
+import axios from "axios";
+
+import { BACKEND_ADDRESS } from "@env";
 
 
 export default function HomeView({ navigation }) {
-
     const [userLocation, setUserLocation] = useState(null);
     const [carParks, setCarParks] = useState([]);
 
@@ -22,7 +23,6 @@ export default function HomeView({ navigation }) {
     }, []);
 
     useEffect(() => {
-
         const fetchCarParks = async () => {
             if (userLocation) {
                 try {
@@ -54,7 +54,6 @@ export default function HomeView({ navigation }) {
         fetchCarParks();
     }, [userLocation]);
 
-
     useLayoutEffect(() => {
         navigation.setOptions({
             headerShown: false,
@@ -82,9 +81,9 @@ export default function HomeView({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={commonStyles.container}>
             <MapView
-                style={styles.map}
+                style={commonStyles.map}
                 region={userLocation}
                 showsUserLocation={true}
             >
@@ -105,69 +104,25 @@ export default function HomeView({ navigation }) {
                 ))}
             </MapView>
 
-            <View style={styles.buttonContainer}>
+            <View style={homeViewStyles.buttonContainer}>
                 <TouchableOpacity
-                    style={styles.speechButton}
+                    style={homeViewStyles.speechSearchButton}
                     onPress={() =>
                         navigation.navigate("Search", { type: "Speech" })
                     }
                 >
-                    <Text style={styles.speechText}>Speech</Text>
+                    <Text style={commonStyles.buttonText2}>Ask DOM</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={styles.searchButton}
+                    style={homeViewStyles.searchButton}
                     onPress={() =>
                         navigation.navigate("Search", { type: "Text" })
                     }
                 >
-                    <Text style={styles.searchIcon}>🔍</Text>
+                    <Text style={homeViewStyles.searchIcon}>🔍</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: -1,
-    },
-    map: {
-        flex: 1,
-    },
-    buttonContainer: {
-        flexDirection: "row",
-        position: "absolute",
-        bottom: 60,
-        left: "50%",
-        transform: [{ translateX: -125 }],
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 5,
-    },
-    searchButton: {
-        marginLeft: 20,
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: "white",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    searchIcon: {
-        fontSize: 24,
-    },
-    speechButton: {
-        width: 150,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: "#2196F3",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    speechText: {
-        color: "white",
-        fontWeight: "bold",
-    },
-});
