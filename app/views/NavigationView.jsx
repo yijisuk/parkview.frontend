@@ -199,7 +199,7 @@ export default function NavigationView({ route }) {
 
     // API call to POST /addFavouriteLocation
     // (to change console log to alert user using notification bar or other methods)
-    function addFavourites() {
+    function addToFavourites() {
         axios
             .post(
                 `${BACKEND_ADDRESS}/addFavouriteLocation?id=${user.identities[0].id}&location=${destinationAddress}`
@@ -298,8 +298,8 @@ export default function NavigationView({ route }) {
                         />
                     ) : (
                         <>
-                            <Text style={commonStyles.fieldText3}>
-                                {destinationAddress}
+                            <Text style={commonStyles.fieldText2}>
+                                {`${destinationAddress}\n`}
                             </Text>
                             {errorExists ? (
                                 <Text style={commonStyles.fieldText3}>
@@ -307,7 +307,7 @@ export default function NavigationView({ route }) {
                                 </Text>
                             ) : (
                                 <>
-                                    <Text style={commonStyles.fieldText3}>
+                                    <Text style={commonStyles.fieldText2}>
                                         {parkingLotAddress}
                                     </Text>
                                     <Text style={commonStyles.fieldText3}>

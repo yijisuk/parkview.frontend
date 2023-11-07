@@ -3,10 +3,13 @@ import "react-native-url-polyfill/auto";
 import { router } from "expo-router";
 import supabase from "../config/supabase";
 import React, { useEffect } from "react";
+import { LogBox } from "react-native";
 import AuthScreen from "./auth/AuthScreen";
 
 
 export default function App() {
+
+    LogBox.ignoreAllLogs();
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {

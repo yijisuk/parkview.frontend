@@ -27,9 +27,9 @@ export const commonToolkit = {
     mainThemeColor: mainThemeColor,
 };
 
-const textBasics = (fontSize, type) => ({
+const textBasics = (fontSize, type, isBold) => ({
     fontSize: fontSize,
-    fontWeight: "bold",
+    fontWeight: isBold ? "bold" : "normal",
     color: type === "field" ? fieldElemColor : buttonTextColor,
 });
 
@@ -47,28 +47,28 @@ export const commonStyles = StyleSheet.create({
         backgroundColor: isColorSchemeDark ? mainBlack : mainWhite,
     },
     headerFieldText: {
-        ...textBasics(26, "field"),
+        ...textBasics(26, "field", true),
     },
     headerButtonText: {
-        ...textBasics(26, "button"),
+        ...textBasics(26, "button", true),
     },
     fieldText1: {
-        ...textBasics(24, "field"),
+        ...textBasics(24, "field", true),
     },
     buttonText1: {
-        ...textBasics(24, "button"),
+        ...textBasics(24, "button", true),
     },
     fieldText2: {
-        ...textBasics(20, "field"),
+        ...textBasics(20, "field", true),
     },
     buttonText2: {
-        ...textBasics(20, "button"),
+        ...textBasics(20, "button", true),
     },
     fieldText3: {
-        ...textBasics(18, "field"),
+        ...textBasics(18, "field", false),
     },
     buttonText3: {
-        ...textBasics(18, "button"),
+        ...textBasics(18, "button", false),
     },
     mainButton: {
         ...buttonBasics("main"),

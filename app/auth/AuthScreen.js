@@ -13,7 +13,7 @@ import {
     Keyboard,
 } from "react-native";
 import supabase from "../../config/supabase.js";
-import { BACKEND_ADDRESS, ASSETS_TEMP_LOGO_URI } from "@env";
+import { BACKEND_ADDRESS, LOGO_URI, ASSETS_TEMP_LOGO_URI } from "@env";
 import axios from "axios";
 
 
@@ -85,7 +85,7 @@ export default function AuthScreen() {
                         <Image
                             style={styles.logo}
                             source={{
-                                uri: ASSETS_TEMP_LOGO_URI,
+                                uri: LOGO_URI,
                             }}
                         />
                     </View>

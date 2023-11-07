@@ -13,7 +13,7 @@ const navigationViewStyles = StyleSheet.create({
         justifyContent: "center",
     },
     inner: {
-        flex: 1,
+        padding: 10,
         justifyContent: "center",
         alignItems: "center",
     },
