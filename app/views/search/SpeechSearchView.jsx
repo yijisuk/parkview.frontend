@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import {
     View,
     Text,
-    TextInput,
+    ActivityIndicator,
     TouchableOpacity,
     Alert,
 } from "react-native";
@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../../config/supabase.js";
 import { PARKVIEW_STORAGE_BUCKET, BACKEND_ADDRESS } from "@env";
-import { commonStyles } from "../../styles/commonStyles.js";
+import { commonStyles, commonToolkit } from "../../styles/commonStyles.js";
 
 
 export default function SpeechSearchView() {
@@ -25,6 +25,7 @@ export default function SpeechSearchView() {
     const [recording, setRecording] = useState(false);
     const [user, setUser] = useState(null);
     const [destinationAddress, setDestinationAddress] = useState(null);
+    const [loading, setLoading] = useState(false);
     const recordingInstance = useRef(null);
 
     // Initial load for user information
@@ -107,6 +108,9 @@ export default function SpeechSearchView() {
     }
 
     async function processAudioToDestination(uri, contentType = "audio/m4a") {
+        
+        setLoading(true);
+
         try {
             // upload Audio to Supabase
             const base64FileData = await readAudioFileAsBase64(uri);
@@ -153,6 +157,8 @@ export default function SpeechSearchView() {
         } catch (error) {
             console.error("An error occurred:", error.message);
         }
+
+        setLoading(false);
     }
 
     async function readAudioFileAsBase64(uri) {
@@ -169,14 +175,21 @@ export default function SpeechSearchView() {
 
     return (
         <View style={speechSearchViewStyles.container}>
-            <TouchableOpacity
-                style={speechSearchViewStyles.speechSearchButton}
-                onPress={recording ? handleRecordedFile : startRecording}
-            >
-                <Text style={commonStyles.buttonText3}>
-                    {recording ? "Stop Recording" : "Start Recording"}
-                </Text>
-            </TouchableOpacity>
+            {loading ? (
+                <ActivityIndicator
+                    size="large"
+                    color={commonToolkit.mainThemeColor}
+                />
+            ) : (
+                <TouchableOpacity
+                    style={speechSearchViewStyles.speechSearchButton}
+                    onPress={recording ? handleRecordedFile : startRecording}
+                >
+                    <Text style={commonStyles.buttonText3}>
+                        {recording ? "Stop Recording" : "Start Recording"}
+                    </Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
