@@ -41,9 +41,11 @@ This is the frontend repository. The backend repository is accessible [here](htt
   GOOGLE_API_KEY=[Google Cloud API Key]
   ```
 
-  - Visit [Supabase](https://supabase.com/) to create a new database project, and get the respective details for ANNON_KEY, SERVICE_ROLE_KEY, and STORAGE_BUCKET
+  Visit the following websites:
 
-  - Visit [Google Cloud Platform](https://cloud.google.com) to get the API key to access Google Cloud API services
+  - [Supabase](https://supabase.com/) to create a new database project, and get the respective details for ANNON_KEY, SERVICE_ROLE_KEY, and STORAGE_BUCKET
+
+  - [Google Cloud Platform](https://cloud.google.com) to get the API key to access Google Cloud API services
 
 4. Run the backend server; refer to the README on the [backend repository](https://github.com/yijisuk/parkview.backend).
   
