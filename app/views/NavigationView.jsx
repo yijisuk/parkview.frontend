@@ -152,7 +152,7 @@ export default function NavigationView({ route }) {
             destinationData = destinationResponse.data;
 
             // Your logic depending on destinationData goes here
-            if (!destinationData) {
+            if (!destinationData || destinationData === null) {
                 setErrorExists(true);
                 console.error("Invalid destination data.");
                 return;
