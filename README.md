@@ -2,7 +2,9 @@
 
 The parkview project was developed as part of the coursework for the **SC2006 (Software Engineering)** module at Nanyang Technological University (NTU), Singapore. 
 
-<img src="https://github.com/yijisuk/parkview.frontend/assets/63234184/2feef444-63d1-4d49-a018-71f8f377e830" alt="logo" width="250"/>
+<p align="center">
+   <img src="https://github.com/yijisuk/parkview.frontend/assets/63234184/2feef444-63d1-4d49-a018-71f8f377e830" alt="logo" width="300"/>
+</p>
 
 **The mobile application is designed to enhance the parking experience by guiding users to the optimal parking location based on their destination and personal preferences. Users can input their intended destination, and parkview will suggest the most suitable parking spot, taking into consideration factors such as proximity and availability.**
 
@@ -24,9 +26,9 @@ This is the frontend repository. The backend repository is accessible [here](htt
 
 5. Create a ```.env``` file on the root directory to store environment variables - mainly credentials and api keys.
 
-- Using Max/Linux ➡️ ```touch .env```
+- Using Mac/Linux: ```touch .env```
 
-- Using Windows ➡️ ```echo. > .env```
+- Using Windows: ```echo. > .env```
 
   Details to be included on ```.env``` are:
   ```MARKDOWN
@@ -39,9 +41,18 @@ This is the frontend repository. The backend repository is accessible [here](htt
   GOOGLE_API_KEY=[Google Cloud API Key]
   ```
 
-4. Run the backend server; refer to the README on the [backend repository](https://github.com/yijisuk/parkview.backend).
+  - Visit [Supabase](https://supabase.com/) to create a new database project, and get the respective details for ANNON_KEY, SERVICE_ROLE_KEY, and STORAGE_BUCKET
 
-5. Run expo on the frontend to emulate the app on either the local machine simulator or a mobile device.
+  - Visit [Google Cloud Platform](https://cloud.google.com) to get the API key to access Google Cloud API services
+
+4. Run the backend server; refer to the README on the [backend repository](https://github.com/yijisuk/parkview.backend).
+  
+   - If the backend server is running on a local machine, get the ip address of the local machine and replace the ```BACKEND_ADDRESS``` on ```.env``` accordingly: ```{BACKEND_ADDRESS}/{PORT_NUMBER}```
+     
+     - Using Mac/Linux: ```ifconfig```, then search for the ipv4 address associated with either ```en0``` or ```en1```
+     - Using Windows: ```ipconfig```, then search for the ipv4 address
+
+7. Run expo on the frontend to emulate the app on either the local machine simulator or a mobile device.
 
    ```npx expo start```
 
