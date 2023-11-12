@@ -17,6 +17,8 @@ The parkview project was developed as part of the coursework for the **SC2006 (S
 
 This is the frontend repository. The backend repository is accessible [here](https://github.com/yijisuk/parkview.backend).
 
+Check the app demo video [here](https://youtu.be/Vpp5BNTWsqc).
+
 ## Tech Stack
 
 **Frontend**: [React Native](https://reactnative.dev/) & [Expo](https://expo.dev/)
